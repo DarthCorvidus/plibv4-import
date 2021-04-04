@@ -12,6 +12,15 @@ class Import {
 		$this->array = $array;
 		$this->model = $model;
 		$this->importScalars();
+		$this->checkUnexpected();
+	}
+	
+	public function checkUnexpected() {
+		foreach($this->array as $key => $value) {
+			if(!isset($this->imported[$key])) {
+				throw new ImportException("[\"".$key."\"] with value '".$value."' is not expected in array");
+			}
+		}
 	}
 	
 	function noValue($key) {

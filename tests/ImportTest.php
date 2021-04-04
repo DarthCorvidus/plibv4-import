@@ -60,11 +60,16 @@ class ImportTest extends TestCase {
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"location\"] is missing from array");
 		$import = new Import($array, $importGeneric);
-		$this->assertEquals($import->getArray(), $result);
-		
 	}
 	
-	#function testUnexpected() {
-	#	
-	#}
+	function testUnexpected() {
+		$array = array("name"=>"Maggie", "species"=>"Magpie", "beak"=>"nice");
+		$result = array("name"=>"Maggie", "species"=>"Magpie");
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("name", new ScalarGeneric());
+		$importGeneric->addScalar("species", new ScalarGeneric());
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("[\"beak\"] with value 'nice' is not expected in array");
+		$import = new Import($array, $importGeneric);
+	}
 }
