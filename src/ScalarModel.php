@@ -10,4 +10,6 @@ Interface ScalarModel {
 	function isMandatory(): bool;
 	function hasValidate(): bool;
 	function getValidate(): Validate;
+	function hasConvert(): bool;
+	function getConvert(): Convert;
 }

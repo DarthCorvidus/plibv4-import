@@ -13,6 +13,7 @@ class Import {
 		$this->model = $model;
 		$this->importScalars();
 		$this->validateScalars();
+		$this->convertScalars();
 		$this->checkUnexpected();
 	}
 	
@@ -61,6 +62,16 @@ class Import {
 				throw new ImportException("Validation failed for [\"".$value."\"]: ".$e->getMessage());
 			}
 		}
+	}
+
+	private function convertScalars() {
+		foreach($this->model->getScalarNames() as $key => $value) {
+			if(!$this->model->getScalarModel($value)->hasConvert()) {
+				continue;
+			}
+			$this->imported[$value] = $this->model->getScalarModel($value)->getConvert()->convert($this->imported[$value]);
+		}
+		
 	}
 
 	function getArray() {

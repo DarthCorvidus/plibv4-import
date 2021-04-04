@@ -8,6 +8,7 @@ class ScalarGeneric implements ScalarModel {
 	private $default;
 	private $mandatory = FALSE;
 	private $validate;
+	private $convert;
 	public function setDefault(string $default) {
 		$this->default = $default;
 	}
@@ -39,5 +40,17 @@ class ScalarGeneric implements ScalarModel {
 		return $this->validate;
 	}
 
+	public function setConvert(Convert $convert) {
+		$this->convert = $convert;
+	}
+	
+	public function hasConvert(): bool {
+		return $this->convert!=NULL;
+	}
+	
+	
+	public function getConvert(): Convert {
+		return $this->convert;
+	}
 
 }

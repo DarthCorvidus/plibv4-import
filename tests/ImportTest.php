@@ -113,6 +113,19 @@ class ImportTest extends TestCase {
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
 		$importGeneric = new Import(array(), $importGeneric);
 	}
+	
+	function testConvert() {
+		$array = array("maxDuration"=>"01:00:00");
+		$result = array("maxDuration"=>"3600");
+
+		$importGeneric = new ImportGeneric();
+		$convert = new ScalarGeneric();
+		$convert->setConvert(new ConvertTime(ConvertTime::HMS, ConvertTime::SECONDS));
+		$importGeneric->addScalar("maxDuration", $convert);
+		$importGeneric = new Import($array, $importGeneric);
+		$this->assertEquals($importGeneric->getArray(), $result);
+		
+	}
 
 	
 	function testUnexpected() {
