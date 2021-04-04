@@ -8,4 +8,6 @@ Interface ScalarModel {
 	function getDefault(): string;
 	function hasDefault(): bool;
 	function isMandatory(): bool;
+	function hasValidate(): bool;
+	function getValidate(): Validate;
 }

@@ -7,6 +7,7 @@
 class ScalarGeneric implements ScalarModel {
 	private $default;
 	private $mandatory = FALSE;
+	private $validate;
 	public function setDefault(string $default) {
 		$this->default = $default;
 	}
@@ -26,4 +27,17 @@ class ScalarGeneric implements ScalarModel {
 		return $this->mandatory;
 	}
 	
+	public function setValidate(Validate $validate) {
+		$this->validate = $validate;
+	}
+
+	public function hasValidate(): bool {
+		return $this->validate!=NULL;
+	}
+
+	public function getValidate(): Validate {
+		return $this->validate;
+	}
+
+
 }

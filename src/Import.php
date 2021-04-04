@@ -12,6 +12,7 @@ class Import {
 		$this->array = $array;
 		$this->model = $model;
 		$this->importScalars();
+		$this->validateScalars();
 		$this->checkUnexpected();
 	}
 	
@@ -49,6 +50,19 @@ class Import {
 		}
 	}
 	
+	private function validateScalars() {
+		foreach($this->model->getScalarNames() as $key => $value) {
+			if(!$this->model->getScalarModel($value)->hasValidate()) {
+				continue;
+			}
+			try {
+				$this->model->getScalarModel($value)->getValidate()->validate($this->imported[$value]);
+			} catch(ValidateException $e) {
+				throw new ImportException("Validation failed for [\"".$value."\"]: ".$e->getMessage());
+			}
+		}
+	}
+
 	function getArray() {
 		return $this->imported;
 	}

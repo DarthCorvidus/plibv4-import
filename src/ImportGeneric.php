@@ -17,5 +17,4 @@ class ImportGeneric implements ImportModel {
 	public function getScalarNames() {
 		return array_keys($this->scalarModels);
 	}
-
 }
