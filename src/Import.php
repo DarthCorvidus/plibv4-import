@@ -12,11 +12,6 @@ class Import {
 	function __construct(array $array, ImportModel $model) {
 		$this->array = $array;
 		$this->model = $model;
-		$this->importScalars();
-		$this->validateScalars();
-		$this->convertScalars();
-		$this->importDictionaries();
-		$this->checkUnexpected();
 	}
 	
 	private function addPath($element) {
@@ -111,6 +106,13 @@ class Import {
 	}
 	
 	function getArray() {
-		return $this->imported;
+		if($this->imported==array()) {
+			$this->importScalars();
+			$this->validateScalars();
+			$this->convertScalars();
+			$this->importDictionaries();
+			$this->checkUnexpected();
+		}
+	return $this->imported;
 	}
 }

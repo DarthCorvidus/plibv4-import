@@ -68,9 +68,10 @@ class ImportTest extends TestCase {
 		$location = new ScalarGeneric();
 		$location->setMandatory();
 		$importGeneric->addScalar("location", $location);
+		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"location\"] is missing from array");
-		$import = new Import($array, $importGeneric);
+		$import->getArray();
 	}
 	
 	function testValidate() {
@@ -95,9 +96,10 @@ class ImportTest extends TestCase {
 		$validate->setValidate(new ValidateTime());
 		$importGeneric->addScalar("maxDuration", $validate);
 		
+		$importGeneric = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
-		$importGeneric = new Import($array, $importGeneric);
+		$importGeneric->getArray();
 	}
 	function testValidateDefaulted() {
 		$result = array("maxDuration"=>"08:00:00");
@@ -120,9 +122,10 @@ class ImportTest extends TestCase {
 		$validate->setDefault("8h");
 		$importGeneric->addScalar("maxDuration", $validate);
 		
+		$importGeneric = new Import(array(), $importGeneric);
 		$this->expectException(ImportException::class);
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
-		$importGeneric = new Import(array(), $importGeneric);
+		$importGeneric->getArray();
 	}
 	
 	function testConvert() {
@@ -198,10 +201,10 @@ class ImportTest extends TestCase {
 		$importModel->addScalar("target", new ScalarGeneric());
 		$importModel->addImportModel("retention", $importRetention);
 		
+		$import = new Import($input, $importModel);
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"daily\"] is missing from array");
-		$import = new Import($input, $importModel);
-		#$this->assertEquals($input, $import->getArray());
+		$import->getArray();
 	}
 	
 	function testImportDictionaryDefaulted() {
@@ -234,8 +237,10 @@ class ImportTest extends TestCase {
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", new ScalarGeneric());
 		$importGeneric->addScalar("species", new ScalarGeneric());
+		
+		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"beak\"] with value 'nice' is not expected in array");
-		$import = new Import($array, $importGeneric);
+		$import->getArray();
 	}
 }
