@@ -14,23 +14,32 @@ class Import {
 		$this->model = $model;
 	}
 	
-	private function addPath($element) {
-		$this->path[] = $element;
+	private function setPath(array $path) {
+		$this->path = $path;
 	}
 	
-	private function getPath($key) {
-		$path = $this->path;
-		$path[] = "[\"".$key."\"]";
-		return implode("", $path);
+	private function getPath():array {
+	return $this->path;
 	}
+	
+	private function getErrorPath($name):string {
+		$path = $this->path;
+		$path[] = $name;
+		$niced = array();
+		foreach ($path as $value) {
+			$niced[] = "[\"".$value."\"]";
+		}
+	return implode("", $niced);
+	}
+	
 	
 	public function checkUnexpected() {
 		foreach($this->array as $key => $value) {
 			if(!isset($this->imported[$key]) and is_scalar($value)) {
-				throw new ImportException($this->getPath($key)." with value '".$value."' is not expected in array");
+				throw new ImportException($this->getErrorPath($key)." with value '".$value."' is not expected in array");
 			}
 			if(!isset($this->imported[$key]) and is_array($value)) {
-				throw new ImportException($this->getPath($key)." is not expected in array");
+				throw new ImportException($this->getErrorPath($key)." is not expected in array");
 			}
 
 		}
@@ -56,7 +65,7 @@ class Import {
 				continue;
 			}
 			if($this->noValue($value) and $this->model->getScalarModel($value)->isMandatory()) {
-				throw new ImportException("[\"".$value."\"] is missing from array");
+				throw new ImportException($this->getErrorPath($value)." is missing from array");
 			}
 			if($this->noValue($value)) {
 				continue;
@@ -73,7 +82,7 @@ class Import {
 			try {
 				$this->model->getScalarModel($value)->getValidate()->validate($this->imported[$value]);
 			} catch(ValidateException $e) {
-				throw new ImportException("Validation failed for [\"".$value."\"]: ".$e->getMessage());
+				throw new ImportException("Validation failed for ".$this->getErrorPath($value).": ".$e->getMessage());
 			}
 		}
 	}
@@ -89,8 +98,13 @@ class Import {
 	
 	private function importDictionaries() {
 		foreach($this->model->getImportNames() as $name) {
+			$mypath = $this->getPath();
+			$mypath[] = $name;
 			if($this->noValue($name)) {
 				$import = new Import(array(), $this->model->getImportModel($name));
+
+				
+				$import->setPath($mypath);
 				$array = $import->getArray();
 				// If $import returned an empty array - ie all values are
 				// optional and none was defaulted - skip value altogether.
@@ -101,6 +115,7 @@ class Import {
 				continue;
 			}
 			$import = new Import($this->array[$name], $this->model->getImportModel($name));
+			$import->setPath($mypath);
 			$this->imported[$name] = $import->getArray();
 		}
 	}

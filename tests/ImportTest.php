@@ -203,7 +203,7 @@ class ImportTest extends TestCase {
 		
 		$import = new Import($input, $importModel);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("[\"daily\"] is missing from array");
+		$this->expectExceptionMessage("[\"retention\"][\"daily\"] is missing from array");
 		$import->getArray();
 	}
 	
@@ -230,6 +230,54 @@ class ImportTest extends TestCase {
 		$this->assertEquals($result, $import->getArray());
 	}
 
+	function testRecursion() {
+		$array["level1"]["level2"]["level3"]["scalar"] = "15";
+		$importScalar = new ScalarGeneric();
+		#$importScalar->setMandatory();
+		
+		
+		$level3 = new ImportGeneric();
+		$level3->addScalar("scalar", $importScalar);
+		
+		$level2 = new ImportGeneric();
+		$level2->addImportModel("level3", $level3);
+		
+		$level1 = new ImportGeneric();
+		$level1->addImportModel("level2", $level2);
+		
+		$importModel = new ImportGeneric();
+		$importModel->addImportModel("level1", $level1);
+		
+		$import = new Import($array, $importModel);
+		$this->assertEquals($array, $import->getArray());
+	}
+	
+	function testRecursionError() {
+		$array = array();
+		$array["level1"]["level2"]["level3"] = array();
+		
+		$importScalar = new ScalarGeneric();
+		$importScalar->setMandatory();
+		
+		
+		$level3 = new ImportGeneric();
+		$level3->addScalar("scalar", $importScalar);
+		
+		$level2 = new ImportGeneric();
+		$level2->addImportModel("level3", $level3);
+		
+		$level1 = new ImportGeneric();
+		$level1->addImportModel("level2", $level2);
+		
+		$importModel = new ImportGeneric();
+		$importModel->addImportModel("level1", $level1);
+		
+		$import = new Import($array, $importModel);
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("[\"level1\"][\"level2\"][\"level3\"][\"scalar\"] is missing from array");
+		$import->getArray();
+	}
+	
 	
 	function testUnexpected() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie", "beak"=>"nice");
