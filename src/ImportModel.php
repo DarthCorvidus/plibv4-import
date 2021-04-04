@@ -5,6 +5,8 @@
  * @license LGPL
  */
 interface ImportModel {
-	function getScalarNames();
+	function getScalarNames(): array;
 	function getScalarModel($name): ScalarModel;
+	function getImportNames(): array;
+	function getImportModel($name): ImportModel;
 }

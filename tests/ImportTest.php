@@ -21,6 +21,17 @@ class ImportTest extends TestCase {
 		$this->assertEquals($import->getArray(), $result);
 	}
 	
+	function testImportScalarMissing() {
+		$array = array("name"=>"Maggie");
+		$result = array("name"=>"Maggie");
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("name", new ScalarGeneric());
+		$importGeneric->addScalar("species", new ScalarGeneric());
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($import->getArray(), $result);
+	}
+	
+	
 	function testImportScalarDefaulted() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
@@ -125,6 +136,95 @@ class ImportTest extends TestCase {
 		$importGeneric = new Import($array, $importGeneric);
 		$this->assertEquals($importGeneric->getArray(), $result);
 		
+	}
+
+	function testImportDictionary() {
+		$input["source"] = "/home/";
+		$input["target"] = "/backup/";
+		$input["retention"]["daily"] = "180";
+		$input["retention"]["weekly"] = "52";
+		$input["retention"]["monthly"] = "24";
+		$input["retention"]["yearly"] = "10";
+		
+		
+		$importRetention = new ImportGeneric();
+		$importRetention->addScalar("daily", new ScalarGeneric());
+		$importRetention->addScalar("weekly", new ScalarGeneric());
+		$importRetention->addScalar("monthly", new ScalarGeneric());
+		$importRetention->addScalar("yearly", new ScalarGeneric());
+		
+		$importModel = new ImportGeneric();
+		$importModel->addScalar("source", new ScalarGeneric());
+		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addImportModel("retention", $importRetention);
+		
+		$import = new Import($input, $importModel);
+		$this->assertEquals($input, $import->getArray());
+	}
+
+	function testImportDictionaryMissing() {
+		$input["source"] = "/home/";
+		$input["target"] = "/backup/";
+		
+		$importRetention = new ImportGeneric();
+		$importRetention->addScalar("daily", new ScalarGeneric());
+		$importRetention->addScalar("weekly", new ScalarGeneric());
+		$importRetention->addScalar("monthly", new ScalarGeneric());
+		$importRetention->addScalar("yearly", new ScalarGeneric());
+		
+		$importModel = new ImportGeneric();
+		$importModel->addScalar("source", new ScalarGeneric());
+		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addImportModel("retention", $importRetention);
+		
+		$import = new Import($input, $importModel);
+		$this->assertEquals($input, $import->getArray());
+	}
+	
+	function testImportDictionaryMandatory() {
+		$input["source"] = "/home/";
+		$input["target"] = "/backup/";
+		
+		$importRetention = new ImportGeneric();
+		$mandatory = new ScalarGeneric();
+		$mandatory->setMandatory();
+		$importRetention->addScalar("daily", $mandatory);
+		$importRetention->addScalar("weekly", new ScalarGeneric());
+		$importRetention->addScalar("monthly", new ScalarGeneric());
+		$importRetention->addScalar("yearly", new ScalarGeneric());
+		
+		$importModel = new ImportGeneric();
+		$importModel->addScalar("source", new ScalarGeneric());
+		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addImportModel("retention", $importRetention);
+		
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("[\"daily\"] is missing from array");
+		$import = new Import($input, $importModel);
+		#$this->assertEquals($input, $import->getArray());
+	}
+	
+	function testImportDictionaryDefaulted() {
+		$input["source"] = "/home/";
+		$input["target"] = "/backup/";
+		$result = $input;
+		$result["retention"]["daily"] = 365;
+		
+		$importRetention = new ImportGeneric();
+		$defaulted = new ScalarGeneric();
+		$defaulted->setDefault("365");
+		$importRetention->addScalar("daily", $defaulted);
+		$importRetention->addScalar("weekly", new ScalarGeneric());
+		$importRetention->addScalar("monthly", new ScalarGeneric());
+		$importRetention->addScalar("yearly", new ScalarGeneric());
+		
+		$importModel = new ImportGeneric();
+		$importModel->addScalar("source", new ScalarGeneric());
+		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addImportModel("retention", $importRetention);
+		
+		$import = new Import($input, $importModel);
+		$this->assertEquals($result, $import->getArray());
 	}
 
 	

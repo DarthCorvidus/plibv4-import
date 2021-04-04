@@ -6,6 +6,7 @@
  */
 class ImportGeneric implements ImportModel {
 	private $scalarModels = array();
+	private $importModel = array();
 	function addScalar($name, ScalarModel $model) {
 		$this->scalarModels[$name] = $model;
 	}
@@ -14,7 +15,20 @@ class ImportGeneric implements ImportModel {
 		return $this->scalarModels[$name];
 	}
 
-	public function getScalarNames() {
+	public function getScalarNames():array {
 		return array_keys($this->scalarModels);
 	}
+
+	public function addImportModel($name, ImportModel $import) {
+		$this->importModel[$name] = $import;
+	}
+	
+	public function getImportModel($name): ImportModel {
+		return $this->importModel[$name];
+	}
+
+	public function getImportNames(): array {
+		return array_keys($this->importModel);
+	}
+
 }
