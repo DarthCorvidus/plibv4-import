@@ -88,6 +88,32 @@ class ImportTest extends TestCase {
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
 		$importGeneric = new Import($array, $importGeneric);
 	}
+	function testValidateDefaulted() {
+		$result = array("maxDuration"=>"08:00:00");
+
+		$importGeneric = new ImportGeneric();
+		$validate = new ScalarGeneric();
+		$validate->setValidate(new ValidateTime());
+		$validate->setDefault("08:00:00");
+		$importGeneric->addScalar("maxDuration", $validate);
+		
+		$importGeneric = new Import(array(), $importGeneric);
+		$this->assertEquals($importGeneric->getArray(), $result);
+	}
+	
+	
+	function testValidateDefaultedFail() {
+		$importGeneric = new ImportGeneric();
+		$validate = new ScalarGeneric();
+		$validate->setValidate(new ValidateTime());
+		$validate->setDefault("8h");
+		$importGeneric->addScalar("maxDuration", $validate);
+		
+		$this->expectException(ImportException::class);
+		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
+		$importGeneric = new Import(array(), $importGeneric);
+	}
+
 	
 	function testUnexpected() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie", "beak"=>"nice");
