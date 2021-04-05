@@ -27,6 +27,10 @@ class Import {
 		$path[] = $name;
 		$niced = array();
 		foreach ($path as $value) {
+			if($value===NULL) {
+				$niced[] = "[]";
+				continue;
+			}
 			$niced[] = "[\"".$value."\"]";
 		}
 	return implode("", $niced);
@@ -137,6 +141,35 @@ class Import {
 		}
 		
 	}
+
+	private function importDictionaryList() {
+		foreach($this->model->getImportListNames() as $name) {
+			$mypath = $this->getPath();
+			$mypath[] = $name;
+			if($this->noValue($name)) {
+				$mypath[] = NULL;
+				$import = new Import(array(), $this->model->getImportListModel($name));
+				$import->setPath($mypath);
+				$array = $import->getArray();
+				// If $import returned an empty array - ie all values are
+				// optional and none was defaulted - skip value altogether.
+				if(empty($array)) {
+					continue;
+				}
+				$this->imported[$name][] = $array;
+				continue;
+			}
+
+			
+			foreach($this->array[$name] as $id => $sub) {
+				$mypath[] = $id;
+				$importModel = $this->model->getImportListModel($name);
+				$import = new Import($sub, $importModel);
+				$this->imported[$name][] = $import->getArray();
+			}
+		}
+	}
+
 	
 	function getArray() {
 		if($this->imported==array()) {
@@ -146,6 +179,8 @@ class Import {
 			$this->convertScalars();
 			
 			$this->importDictionaries();
+			$this->importDictionaryList();
+					
 			$this->checkUnexpected();
 		}
 	return $this->imported;

@@ -230,7 +230,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($result, $import->getArray());
 	}
 
-	function testImportListScalar() {
+	function testScalarList() {
 		$array = array();
 		$array["scalar"] = "value";
 		$array["sports"][] = "soccer";
@@ -245,7 +245,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 
-	function testImportListScalarDefaulted() {
+	function testScalarListDefaulted() {
 		$array = array();
 		$array["scalar"] = "value";
 		
@@ -263,7 +263,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($result, $import->getArray());
 	}
 
-	function testImportListScalarMandatory() {
+	function testScalarListMandatory() {
 		$array = array();
 		$array["scalar"] = "value";
 		
@@ -280,7 +280,7 @@ class ImportTest extends TestCase {
 		$import->getArray();
 	}
 
-	function testImportListScalarOptional() {
+	function testScalarListOptional() {
 		$array = array();
 		$array["scalar"] = "value";
 		
@@ -292,6 +292,95 @@ class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($array, $import->getArray());
+	}
+
+	function testImportList() {
+		$array = array();
+		$array["scalar"] = "value";
+		$array["jobs"][0]["source"] = "/home/";
+		$array["jobs"][0]["target"] = "/backup/home/";
+		$array["jobs"][1]["source"] = "/data/";
+		$array["jobs"][1]["target"] = "/backup/data/";
+		
+		$importJobs = new ImportGeneric();
+		$importJobs->addScalar("source", new ScalarGeneric());
+		$importJobs->addScalar("target", new ScalarGeneric());
+		
+		
+		$importMain = new ImportGeneric();
+		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addImportList("jobs", $importJobs);
+		
+
+		$import = new Import($array, $importMain);
+		$this->assertEquals($array, $import->getArray());
+	}
+	
+	function testImportListOptional() {
+		$array = array();
+		$array["scalar"] = "value";
+
+		$importJobs = new ImportGeneric();
+		$importJobs->addScalar("source", new ScalarGeneric());
+		$importJobs->addScalar("target", new ScalarGeneric());
+		
+		
+		$importMain = new ImportGeneric();
+		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addImportList("jobs", $importJobs);
+		
+		$import = new Import($array, $importMain);
+		$this->assertEquals($array, $import->getArray());
+		
+	}
+	
+	function testImportListDefaulted() {
+		$array = array();
+		$array["scalar"] = "value";
+
+		$result = $array;
+		$result["jobs"][0]["source"] = "/home/";
+		$result["jobs"][0]["target"] = "/backup/";
+		
+		$defaulted = new ScalarGeneric();
+		$defaulted->setDefault("/home/");
+		$importJobs = new ImportGeneric();
+		
+		$importJobs->addScalar("source", $defaulted);
+		
+		$defaulted = new ScalarGeneric();
+		$defaulted->setDefault("/backup/");
+		$importJobs->addScalar("target", $defaulted);
+		
+		
+		$importMain = new ImportGeneric();
+		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addImportList("jobs", $importJobs);
+		
+		$import = new Import($array, $importMain);
+		$this->assertEquals($result, $import->getArray());
+	}
+
+	function testImportListMandatory() {
+		$array = array();
+		$array["scalar"] = "value";
+
+		$mandatory = new ScalarGeneric();
+		$mandatory->setMandatory();
+
+		$importJobs = new ImportGeneric();
+		$importJobs->addScalar("source", $mandatory);
+		$importJobs->addScalar("target", $mandatory);
+		
+		
+		$importMain = new ImportGeneric();
+		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addImportList("jobs", $importJobs);
+		
+		$import = new Import($array, $importMain);
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("[\"jobs\"][][\"source\"] is missing from array");
+		$import->getArray();
 	}
 
 	
