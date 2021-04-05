@@ -120,11 +120,31 @@ class Import {
 		}
 	}
 	
+	private function importLists() {
+		foreach($this->model->getScalarListNames() as $name) {
+			$scalarModel = $this->model->getScalarListModel($name);
+			if($this->noValue($name) and $scalarModel->hasDefault()) {
+				$this->imported[$name][] = $scalarModel->getDefault();
+				continue;
+			}
+			if($this->noValue($name) and !$scalarModel->isMandatory()) {
+				continue;
+			}
+			if($this->noValue($name) and $scalarModel->isMandatory()) {
+				throw new ImportException($this->getErrorPath($name)."[] is mandatory, needs to contain at least one value");
+			}
+			$this->imported[$name] = $this->array[$name];
+		}
+		
+	}
+	
 	function getArray() {
 		if($this->imported==array()) {
 			$this->importScalars();
+			$this->importLists();
 			$this->validateScalars();
 			$this->convertScalars();
+			
 			$this->importDictionaries();
 			$this->checkUnexpected();
 		}

@@ -230,6 +230,71 @@ class ImportTest extends TestCase {
 		$this->assertEquals($result, $import->getArray());
 	}
 
+	function testImportListScalar() {
+		$array = array();
+		$array["scalar"] = "value";
+		$array["sports"][] = "soccer";
+		$array["sports"][] = "golf";
+		$array["sports"][] = "marathon";
+
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalarList("sports", new ScalarGeneric());
+		
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($array, $import->getArray());
+	}
+
+	function testImportListScalarDefaulted() {
+		$array = array();
+		$array["scalar"] = "value";
+		
+		$result = $array;
+		$result["sports"][] = "Dodgeball";
+
+		$scalarDefaulted = new ScalarGeneric();
+		$scalarDefaulted->setDefault("Dodgeball");
+		
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalarList("sports", $scalarDefaulted);
+		
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($result, $import->getArray());
+	}
+
+	function testImportListScalarMandatory() {
+		$array = array();
+		$array["scalar"] = "value";
+		
+		$scalarMandatory = new ScalarGeneric();
+		$scalarMandatory->setMandatory();
+		
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalarList("sports", $scalarMandatory);
+		
+		$import = new Import($array, $importGeneric);
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("[\"sports\"][] is mandatory, needs to contain at least one value");
+		$import->getArray();
+	}
+
+	function testImportListScalarOptional() {
+		$array = array();
+		$array["scalar"] = "value";
+		
+		$scalarMandatory = new ScalarGeneric();
+		
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalarList("sports", $scalarMandatory);
+		
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($array, $import->getArray());
+	}
+
+	
 	function testRecursion() {
 		$array["level1"]["level2"]["level3"]["scalar"] = "15";
 		$importScalar = new ScalarGeneric();

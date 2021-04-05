@@ -7,6 +7,8 @@
 interface ImportModel {
 	function getScalarNames(): array;
 	function getScalarModel($name): ScalarModel;
+	function getScalarListNames(): array;
+	function getScalarListModel($name): ScalarModel;
 	function getImportNames(): array;
 	function getImportModel($name): ImportModel;
 }
