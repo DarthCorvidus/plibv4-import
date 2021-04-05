@@ -4,11 +4,23 @@
  * @author Claus-Christoph Küthe <floss@vm01.telton.de>
  * @license LGPL
  */
+
+/**
+ * Import
+ * 
+ * Uses an import model to import values from an array, considering default
+ * values, mandatory values, validators and conversions.
+ */
 class Import {
 	private $array = array();
 	private $imported = array();
 	private $model;
 	private $path = array();
+	/**
+	 * Construct with the array you want to import from and an import model.
+	 * @param array $array
+	 * @param ImportModel $model
+	 */
 	function __construct(array $array, ImportModel $model) {
 		$this->array = $array;
 		$this->model = $model;
@@ -37,7 +49,7 @@ class Import {
 	}
 	
 	
-	public function checkUnexpected() {
+	private function checkUnexpected() {
 		foreach($this->array as $key => $value) {
 			if(!isset($this->imported[$key]) and is_scalar($value)) {
 				throw new ImportException($this->getErrorPath($key)." with value '".$value."' is not expected in array");
@@ -49,7 +61,7 @@ class Import {
 		}
 	}
 	
-	function noValue($key) {
+	private function noValue($key) {
 		if(!isset($this->array[$key])) {
 			return true;
 		}
@@ -170,7 +182,16 @@ class Import {
 		}
 	}
 
-	
+	/**
+	 * Get Array
+	 * 
+	 * Return array according to rules laid down in import model. It also checks
+	 * for missing or unexpected values (values that do not exist in import
+	 * model). Throws import exception if anything goes awry; will throw through
+	 * Exceptions other than ValidateException, however.
+	 * @return type
+	 * @throws ImportException
+	 */
 	function getArray() {
 		if($this->imported==array()) {
 			$this->importScalars();

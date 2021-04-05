@@ -4,6 +4,12 @@
  * @author Claus-Christoph Küthe <floss@vm01.telton.de>
  * @license LGPL
  */
+
+/**
+ * ScalarGeneric
+ * 
+ * Generic implementation for scalar model.
+ */
 class ScalarGeneric implements ScalarModel {
 	private $default;
 	private $mandatory = FALSE;
