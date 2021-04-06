@@ -28,10 +28,9 @@ class ImportTest extends TestCase {
 		$importGeneric->addScalar("name", new ScalarGeneric());
 		$importGeneric->addScalar("species", new ScalarGeneric());
 		$import = new Import($array, $importGeneric);
-		$this->assertEquals($import->getArray(), $result);
+		$this->assertEquals($array, $import->getArray());
 	}
-	
-	
+
 	function testImportScalarDefaulted() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
@@ -86,6 +85,21 @@ class ImportTest extends TestCase {
 		$importGeneric = new Import($array, $importGeneric);
 		$this->assertEquals($importGeneric->getArray(), $result);
 	}
+
+	function testImportScalarValidateMissing() {
+		$array = array("name"=>"Maggie");
+		$result = array("name"=>"Maggie");
+		
+		$validatedScalar = new ScalarGeneric();
+		$validatedScalar->setValidate(new ValidateDate(ValidateDate::ISO));
+		
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("name", new ScalarGeneric());
+		$importGeneric->addScalar("birthday", $validatedScalar);
+		
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($array, $import->getArray());
+	}
 	
 	function testValidateFail() {
 		$array = array("maxDuration"=>"4h");
@@ -138,6 +152,19 @@ class ImportTest extends TestCase {
 		$importGeneric->addScalar("maxDuration", $convert);
 		$importGeneric = new Import($array, $importGeneric);
 		$this->assertEquals($importGeneric->getArray(), $result);
+		
+	}
+
+	function testConvertMissing() {
+		$array = array("key"=>"value");
+
+		$importGeneric = new ImportGeneric();
+		$convert = new ScalarGeneric();
+		$convert->setConvert(new ConvertTime(ConvertTime::HMS, ConvertTime::SECONDS));
+		$importGeneric->addScalar("key", new ScalarGeneric());
+		$importGeneric->addScalar("maxDuration", $convert);
+		$importGeneric = new Import($array, $importGeneric);
+		$this->assertEquals($importGeneric->getArray(), $array);
 		
 	}
 

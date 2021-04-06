@@ -95,6 +95,10 @@ class Import {
 			if(!$this->model->getScalarModel($value)->hasValidate()) {
 				continue;
 			}
+			// No need to call Validate on an optional, nonexisting value
+			if(!isset($this->imported[$value])) {
+				continue;
+			}
 			try {
 				$this->model->getScalarModel($value)->getValidate()->validate($this->imported[$value]);
 			} catch(ValidateException $e) {
@@ -106,6 +110,10 @@ class Import {
 	private function convertScalars() {
 		foreach($this->model->getScalarNames() as $key => $value) {
 			if(!$this->model->getScalarModel($value)->hasConvert()) {
+				continue;
+			}
+			// No need to call Convert on an optional, nonexisting value
+			if(!isset($this->imported[$value])) {
 				continue;
 			}
 			$this->imported[$value] = $this->model->getScalarModel($value)->getConvert()->convert($this->imported[$value]);
