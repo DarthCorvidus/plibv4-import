@@ -272,6 +272,22 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 
+	function testScalarListScalarInsteadOfList() {
+		$array = array();
+		$array["scalar"] = "value";
+		$array["sports"] = "soccer";
+
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalarList("sports", new ScalarGeneric());
+		
+		$import = new Import($array, $importGeneric);
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("[\"sports\"] is not an array");
+		$import->getArray();
+	}
+
+	
 	function testScalarListDefaulted() {
 		$array = array();
 		$array["scalar"] = "value";
@@ -342,7 +358,7 @@ class ImportTest extends TestCase {
 		$import = new Import($array, $importMain);
 		$this->assertEquals($array, $import->getArray());
 	}
-	
+
 	function testImportListOptional() {
 		$array = array();
 		$array["scalar"] = "value";

@@ -157,6 +157,14 @@ class Import {
 			if($this->noValue($name) and $scalarModel->isMandatory()) {
 				throw new ImportException($this->getErrorPath($name)."[] is mandatory, needs to contain at least one value");
 			}
+			if(!is_array($this->array[$name])) {
+				throw new ImportException($this->getErrorPath($name)." is not an array");
+			}
+			/**
+			 * There's a weak point here: $this->array[$name] could contain an
+			 * associative array.
+			 * @todo: Think about how to deal with this.
+			 */
 			$this->imported[$name] = $this->array[$name];
 		}
 		
