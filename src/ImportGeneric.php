@@ -9,11 +9,11 @@ class ImportGeneric implements ImportModel {
 	private $importModel = array();
 	private $scalarList = array();
 	private $importList = array();
-	function addScalar($name, ScalarModel $model) {
+	function addScalar($name, UserValue $model) {
 		$this->scalarModels[$name] = $model;
 	}
 	
-	public function getScalarModel($name): \ScalarModel {
+	public function getScalarModel($name): UserValue {
 		return $this->scalarModels[$name];
 	}
 
@@ -34,11 +34,11 @@ class ImportGeneric implements ImportModel {
 		return array_keys($this->importModel);
 	}
 
-	public function addScalarList($name, ScalarModel $model) {
+	public function addScalarList($name, UserValue $model) {
 		$this->scalarList[$name] = $model;
 	}
 	
-	public function getScalarListModel($name): \ScalarModel {
+	public function getScalarListModel($name): UserValue {
 		return $this->scalarList[$name];
 	}
 

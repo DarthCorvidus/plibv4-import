@@ -26,7 +26,7 @@ interface ImportModel {
 	 * Return the scalar model for a specific array key.
 	 * @param type $name
 	 */
-	function getScalarModel($name): ScalarModel;
+	function getScalarModel($name): UserValue;
 	
 	/**
 	 * Get scalar list names
@@ -42,7 +42,7 @@ interface ImportModel {
 	 * Return a scalar model to be applied to the list below $name.
 	 * @param type $name
 	 */
-	function getScalarListModel($name): ScalarModel;
+	function getScalarListModel($name): UserValue;
 	
 	/**
 	 * Get Import Names

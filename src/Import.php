@@ -76,17 +76,30 @@ class Import {
 	
 	private function importScalars() {
 		foreach($this->model->getScalarNames() as $value) {
-			if($this->noValue($value) and $this->model->getScalarModel($value)->hasDefault()) {
-				$this->imported[$value] = $this->model->getScalarModel($value)->getDefault();
-				continue;
+			#if($this->noValue($value) and $this->model->getScalarModel($value)->hasDefault()) {
+			#	$this->imported[$value] = $this->model->getScalarModel($value)->getDefault();
+			#	continue;
+			#}
+			#if($this->noValue($value) and $this->model->getScalarModel($value)->isMandatory()) {
+			#	throw new ImportException($this->getErrorPath($value)." is missing from array");
+			#}
+			#if($this->noValue($value)) {
+			#	continue;
+			#}
+			try {
+				$userValue = $this->model->getScalarModel($value);
+				if(isset($this->array[$value])) {
+					$userValue->setValue($this->array[$value]);
+				}
+				if($userValue->getValue()==="") {
+					continue;
+				}
+				$this->imported[$value] = $userValue->getValue();
+			} catch (MandatoryException $e) {
+				throw new ImportException($this->getErrorPath($value).": ".$e->getMessage());
+			} catch (ValidateException $e) {
+				throw new ImportException($this->getErrorPath($value).": ".$e->getMessage());
 			}
-			if($this->noValue($value) and $this->model->getScalarModel($value)->isMandatory()) {
-				throw new ImportException($this->getErrorPath($value)." is missing from array");
-			}
-			if($this->noValue($value)) {
-				continue;
-			}
-			$this->imported[$value] = $this->array[$value];
 		}
 	}
 	
@@ -146,28 +159,56 @@ class Import {
 	
 	private function importLists() {
 		foreach($this->model->getScalarListNames() as $name) {
-			$scalarModel = $this->model->getScalarListModel($name);
-			if($this->noValue($name) and $scalarModel->hasDefault()) {
-				$this->imported[$name][] = $scalarModel->getDefault();
-				continue;
-			}
-			if($this->noValue($name) and !$scalarModel->isMandatory()) {
-				continue;
-			}
-			if($this->noValue($name) and $scalarModel->isMandatory()) {
-				throw new ImportException($this->getErrorPath($name)."[] is mandatory, needs to contain at least one value");
-			}
-			if(!is_array($this->array[$name])) {
-				throw new ImportException($this->getErrorPath($name)." is not an array");
-			}
+			$this->importList($name);
+			#$scalarModel = $this->model->getScalarListModel($name);
+			#if($this->noValue($name) and $scalarModel->hasDefault()) {
+			#	$this->imported[$name][] = $scalarModel->getDefault();
+			#	continue;
+			#}
+			#if($this->noValue($name) and !$scalarModel->isMandatory()) {
+			#	continue;
+			#}
+			#if($this->noValue($name) and $scalarModel->isMandatory()) {
+			#	throw new ImportException($this->getErrorPath($name)."[] is mandatory, needs to contain at least one value");
+			#}
+			#if(!is_array($this->array[$name])) {
+			#	throw new ImportException($this->getErrorPath($name)." is not an array");
+			#}
 			/**
 			 * There's a weak point here: $this->array[$name] could contain an
 			 * associative array.
 			 * @todo: Think about how to deal with this.
 			 */
-			$this->imported[$name] = $this->array[$name];
+			#$this->imported[$name] = $this->array[$name];
 		}
+	}
+	
+	private function importList(string $name) {
+		$userValue = $this->model->getScalarListModel($name);
 		
+		try {
+			if(!isset($this->array[$name])) {
+				$value = $userValue->getValue();
+				if($value==="") {
+					return;
+				}
+				$this->imported[$name][] = $userValue->getValue();
+				return;
+			}
+
+			if(!is_array($this->array[$name])) {
+				throw new ImportException($this->getErrorPath($name)." is not an array");
+			}
+
+			foreach($this->array[$name] as $value) {
+				$userValue->setValue($value);
+				$this->imported[$name][] = $userValue->getValue();
+			}
+		} catch (MandatoryException $e) {
+			throw new ImportException($this->getErrorPath($name)."[] is mandatory, needs to contain at least one value");
+		} catch (ValidateException $e ) {
+			throw new ImportException($this->getErrorPath($name)."[]: ".$e->getMessage());
+		}
 	}
 
 	private function importDictionaryList() {
@@ -212,8 +253,8 @@ class Import {
 		if($this->imported==array()) {
 			$this->importScalars();
 			$this->importLists();
-			$this->validateScalars();
-			$this->convertScalars();
+			#$this->validateScalars();
+			#$this->convertScalars();
 			
 			$this->importDictionaries();
 			$this->importDictionaryList();

@@ -15,8 +15,8 @@ class ImportTest extends TestCase {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$result = array("name"=>"Maggie", "species"=>"Magpie");
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("name", new ScalarGeneric());
-		$importGeneric->addScalar("species", new ScalarGeneric());
+		$importGeneric->addScalar("name", new UserValue());
+		$importGeneric->addScalar("species", new UserValue());
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($import->getArray(), $result);
 	}
@@ -25,34 +25,33 @@ class ImportTest extends TestCase {
 		$array = array("name"=>"Maggie");
 		$result = array("name"=>"Maggie");
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("name", new ScalarGeneric());
-		$importGeneric->addScalar("species", new ScalarGeneric());
+		$importGeneric->addScalar("name", new UserValue());
+		$importGeneric->addScalar("species", new UserValue(FALSE));
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($array, $import->getArray());
 	}
+	
 
 	function testImportScalarDefaulted() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("name", new ScalarGeneric());
-		$importGeneric->addScalar("species", new ScalarGeneric());
-		$location = new ScalarGeneric();
-		$location->setDefault("Europe");
+		$importGeneric->addScalar("name", new UserValue());
+		$importGeneric->addScalar("species", new UserValue());
+		$location = new UserValue();
+		$location->setValue("Europe");
 		$importGeneric->addScalar("location", $location);
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($import->getArray(), $result);
 	}
-	
+
 	function testMandatorySet() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("name", new ScalarGeneric());
-		$importGeneric->addScalar("species", new ScalarGeneric());
-		$location = new ScalarGeneric();
-		$location->setMandatory();
-		$importGeneric->addScalar("location", $location);
+		$importGeneric->addScalar("name", new UserValue());
+		$importGeneric->addScalar("species", new UserValue());
+		$importGeneric->addScalar("location", new UserValue());
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($import->getArray(), $result);
 		
@@ -62,14 +61,12 @@ class ImportTest extends TestCase {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("name", new ScalarGeneric());
-		$importGeneric->addScalar("species", new ScalarGeneric());
-		$location = new ScalarGeneric();
-		$location->setMandatory();
-		$importGeneric->addScalar("location", $location);
+		$importGeneric->addScalar("name", new UserValue());
+		$importGeneric->addScalar("species", new UserValue());
+		$importGeneric->addScalar("location", new UserValue());
 		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("[\"location\"] is missing from array");
+		$this->expectExceptionMessage("[\"location\"]: value is mandatory");
 		$import->getArray();
 	}
 	
@@ -78,7 +75,7 @@ class ImportTest extends TestCase {
 		$result = array("maxDuration"=>"04:00:00");
 
 		$importGeneric = new ImportGeneric();
-		$validate = new ScalarGeneric();
+		$validate = new UserValue();
 		$validate->setValidate(new ValidateTime());
 		$importGeneric->addScalar("maxDuration", $validate);
 		
@@ -90,23 +87,23 @@ class ImportTest extends TestCase {
 		$array = array("name"=>"Maggie");
 		$result = array("name"=>"Maggie");
 		
-		$validatedScalar = new ScalarGeneric();
+		$validatedScalar = new UserValue(FALSE);
 		$validatedScalar->setValidate(new ValidateDate(ValidateDate::ISO));
 		
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("name", new ScalarGeneric());
+		$importGeneric->addScalar("name", new UserValue());
 		$importGeneric->addScalar("birthday", $validatedScalar);
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($array, $import->getArray());
 	}
-	
+
 	function testValidateFail() {
 		$array = array("maxDuration"=>"4h");
 		$result = array("maxDuration"=>"04:00:00");
 
 		$importGeneric = new ImportGeneric();
-		$validate = new ScalarGeneric();
+		$validate = new UserValue();
 		$validate->setValidate(new ValidateTime());
 		$importGeneric->addScalar("maxDuration", $validate);
 		
@@ -115,25 +112,26 @@ class ImportTest extends TestCase {
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
 		$importGeneric->getArray();
 	}
+	
 	function testValidateDefaulted() {
 		$result = array("maxDuration"=>"08:00:00");
 
 		$importGeneric = new ImportGeneric();
-		$validate = new ScalarGeneric();
+		$validate = new UserValue();
 		$validate->setValidate(new ValidateTime());
-		$validate->setDefault("08:00:00");
+		$validate->setValue("08:00:00");
 		$importGeneric->addScalar("maxDuration", $validate);
 		
 		$importGeneric = new Import(array(), $importGeneric);
 		$this->assertEquals($importGeneric->getArray(), $result);
 	}
 	
-	
 	function testValidateDefaultedFail() {
 		$importGeneric = new ImportGeneric();
-		$validate = new ScalarGeneric();
+		$validate = new UserValue();
 		$validate->setValidate(new ValidateTime());
-		$validate->setDefault("8h");
+		$this->expectException(ValidateException::class);
+		$validate->setValue("8h");
 		$importGeneric->addScalar("maxDuration", $validate);
 		
 		$importGeneric = new Import(array(), $importGeneric);
@@ -147,7 +145,7 @@ class ImportTest extends TestCase {
 		$result = array("maxDuration"=>"3600");
 
 		$importGeneric = new ImportGeneric();
-		$convert = new ScalarGeneric();
+		$convert = new UserValue();
 		$convert->setConvert(new ConvertTime(ConvertTime::HMS, ConvertTime::SECONDS));
 		$importGeneric->addScalar("maxDuration", $convert);
 		$importGeneric = new Import($array, $importGeneric);
@@ -159,9 +157,9 @@ class ImportTest extends TestCase {
 		$array = array("key"=>"value");
 
 		$importGeneric = new ImportGeneric();
-		$convert = new ScalarGeneric();
+		$convert = new UserValue(FALSE);
 		$convert->setConvert(new ConvertTime(ConvertTime::HMS, ConvertTime::SECONDS));
-		$importGeneric->addScalar("key", new ScalarGeneric());
+		$importGeneric->addScalar("key", new UserValue());
 		$importGeneric->addScalar("maxDuration", $convert);
 		$importGeneric = new Import($array, $importGeneric);
 		$this->assertEquals($importGeneric->getArray(), $array);
@@ -178,33 +176,33 @@ class ImportTest extends TestCase {
 		
 		
 		$importRetention = new ImportGeneric();
-		$importRetention->addScalar("daily", new ScalarGeneric());
-		$importRetention->addScalar("weekly", new ScalarGeneric());
-		$importRetention->addScalar("monthly", new ScalarGeneric());
-		$importRetention->addScalar("yearly", new ScalarGeneric());
+		$importRetention->addScalar("daily", new UserValue());
+		$importRetention->addScalar("weekly", new UserValue());
+		$importRetention->addScalar("monthly", new UserValue());
+		$importRetention->addScalar("yearly", new UserValue());
 		
 		$importModel = new ImportGeneric();
-		$importModel->addScalar("source", new ScalarGeneric());
-		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addScalar("source", new UserValue());
+		$importModel->addScalar("target", new UserValue());
 		$importModel->addImportModel("retention", $importRetention);
 		
 		$import = new Import($input, $importModel);
 		$this->assertEquals($input, $import->getArray());
 	}
 
-	function testImportDictionaryMissing() {
+	function testImportDictionaryOptional() {
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		
 		$importRetention = new ImportGeneric();
-		$importRetention->addScalar("daily", new ScalarGeneric());
-		$importRetention->addScalar("weekly", new ScalarGeneric());
-		$importRetention->addScalar("monthly", new ScalarGeneric());
-		$importRetention->addScalar("yearly", new ScalarGeneric());
+		$importRetention->addScalar("daily", UserValue::optional());
+		$importRetention->addScalar("weekly", UserValue::optional());
+		$importRetention->addScalar("monthly", UserValue::optional());
+		$importRetention->addScalar("yearly", UserValue::optional());
 		
 		$importModel = new ImportGeneric();
-		$importModel->addScalar("source", new ScalarGeneric());
-		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addScalar("source", new UserValue());
+		$importModel->addScalar("target", new UserValue());
 		$importModel->addImportModel("retention", $importRetention);
 		
 		$import = new Import($input, $importModel);
@@ -216,21 +214,19 @@ class ImportTest extends TestCase {
 		$input["target"] = "/backup/";
 		
 		$importRetention = new ImportGeneric();
-		$mandatory = new ScalarGeneric();
-		$mandatory->setMandatory();
-		$importRetention->addScalar("daily", $mandatory);
-		$importRetention->addScalar("weekly", new ScalarGeneric());
-		$importRetention->addScalar("monthly", new ScalarGeneric());
-		$importRetention->addScalar("yearly", new ScalarGeneric());
+		$importRetention->addScalar("daily", UserValue::mandatory());
+		$importRetention->addScalar("weekly", UserValue::optional());
+		$importRetention->addScalar("monthly", UserValue::optional());
+		$importRetention->addScalar("yearly", UserValue::optional());
 		
 		$importModel = new ImportGeneric();
-		$importModel->addScalar("source", new ScalarGeneric());
-		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addScalar("source", UserValue::mandatory());
+		$importModel->addScalar("target", new UserValue());
 		$importModel->addImportModel("retention", $importRetention);
 		
 		$import = new Import($input, $importModel);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("[\"retention\"][\"daily\"] is missing from array");
+		$this->expectExceptionMessage("[\"retention\"][\"daily\"]: value is mandatory");
 		$import->getArray();
 	}
 	
@@ -241,16 +237,16 @@ class ImportTest extends TestCase {
 		$result["retention"]["daily"] = 365;
 		
 		$importRetention = new ImportGeneric();
-		$defaulted = new ScalarGeneric();
-		$defaulted->setDefault("365");
+		$defaulted = UserValue::optional();
+		$defaulted->setValue("365");
 		$importRetention->addScalar("daily", $defaulted);
-		$importRetention->addScalar("weekly", new ScalarGeneric());
-		$importRetention->addScalar("monthly", new ScalarGeneric());
-		$importRetention->addScalar("yearly", new ScalarGeneric());
+		$importRetention->addScalar("weekly", UserValue::optional());
+		$importRetention->addScalar("monthly", UserValue::optional());
+		$importRetention->addScalar("yearly", UserValue::optional());
 		
 		$importModel = new ImportGeneric();
-		$importModel->addScalar("source", new ScalarGeneric());
-		$importModel->addScalar("target", new ScalarGeneric());
+		$importModel->addScalar("source", new UserValue());
+		$importModel->addScalar("target", new UserValue());
 		$importModel->addImportModel("retention", $importRetention);
 		
 		$import = new Import($input, $importModel);
@@ -265,8 +261,8 @@ class ImportTest extends TestCase {
 		$array["sports"][] = "marathon";
 
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("scalar", new ScalarGeneric());
-		$importGeneric->addScalarList("sports", new ScalarGeneric());
+		$importGeneric->addScalar("scalar", new UserValue());
+		$importGeneric->addScalarList("sports", new UserValue());
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($array, $import->getArray());
@@ -278,8 +274,8 @@ class ImportTest extends TestCase {
 		$array["sports"] = "soccer";
 
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("scalar", new ScalarGeneric());
-		$importGeneric->addScalarList("sports", new ScalarGeneric());
+		$importGeneric->addScalar("scalar", new UserValue());
+		$importGeneric->addScalarList("sports", new UserValue());
 		
 		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
@@ -295,26 +291,25 @@ class ImportTest extends TestCase {
 		$result = $array;
 		$result["sports"][] = "Dodgeball";
 
-		$scalarDefaulted = new ScalarGeneric();
-		$scalarDefaulted->setDefault("Dodgeball");
+		$scalarDefaulted = new UserValue();
+		$scalarDefaulted->setValue("Dodgeball");
 		
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalar("scalar", new UserValue());
 		$importGeneric->addScalarList("sports", $scalarDefaulted);
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($result, $import->getArray());
 	}
-
+	
 	function testScalarListMandatory() {
 		$array = array();
 		$array["scalar"] = "value";
 		
-		$scalarMandatory = new ScalarGeneric();
-		$scalarMandatory->setMandatory();
+		$scalarMandatory = UserValue::mandatory();
 		
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalar("scalar", new UserValue());
 		$importGeneric->addScalarList("sports", $scalarMandatory);
 		
 		$import = new Import($array, $importGeneric);
@@ -322,19 +317,78 @@ class ImportTest extends TestCase {
 		$this->expectExceptionMessage("[\"sports\"][] is mandatory, needs to contain at least one value");
 		$import->getArray();
 	}
-
+	
 	function testScalarListOptional() {
 		$array = array();
 		$array["scalar"] = "value";
 		
-		$scalarMandatory = new ScalarGeneric();
+		$scalarMandatory = UserValue::optional();
 		
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("scalar", new ScalarGeneric());
+		$importGeneric->addScalar("scalar", new UserValue());
 		$importGeneric->addScalarList("sports", $scalarMandatory);
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($array, $import->getArray());
+	}
+
+	function testScalarListValidatePass() {
+		$array = array();
+		$array["scalar"] = "value";
+		$array["time"][] = "08:00:00";
+		
+		$scalarMandatory = UserValue::mandatory();
+		$scalarMandatory->setValidate(new ValidateTime());
+		
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new UserValue());
+		$importGeneric->addScalarList("time", $scalarMandatory);
+		
+		$import = new Import($array, $importGeneric);
+		
+		$this->assertEquals($array, $import->getArray());
+	}
+	
+	function testScalarListValidateFail() {
+		$array = array();
+		$array["scalar"] = "value";
+		$array["time"][] = "8h";
+		
+		$scalarMandatory = UserValue::mandatory();
+		$scalarMandatory->setValidate(new ValidateTime());
+		
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new UserValue());
+		$importGeneric->addScalarList("time", $scalarMandatory);
+		
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("[\"time\"][]: invalid format, time expected (HH:MM:SS)");
+		$import = new Import($array, $importGeneric);
+		
+		$this->assertEquals($array, $import->getArray());
+	}
+
+	function testScalarListConvert() {
+		$array = array();
+		$array["scalar"] = "value";
+		$array["time"][] = "02:00:00";
+
+		$expect = array();
+		$expect["scalar"] = "value";
+		$expect["time"][] = "7200";
+
+		
+		$scalarMandatory = UserValue::mandatory();
+		$scalarMandatory->setValidate(new ValidateTime());
+		$scalarMandatory->setConvert(new ConvertTime(ConvertTime::HMS, ConvertTime::SECONDS));
+		
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("scalar", new UserValue());
+		$importGeneric->addScalarList("time", $scalarMandatory);
+		
+		$import = new Import($array, $importGeneric);
+		
+		$this->assertEquals($expect, $import->getArray());
 	}
 
 	function testImportList() {
@@ -346,30 +400,31 @@ class ImportTest extends TestCase {
 		$array["jobs"][1]["target"] = "/backup/data/";
 		
 		$importJobs = new ImportGeneric();
-		$importJobs->addScalar("source", new ScalarGeneric());
-		$importJobs->addScalar("target", new ScalarGeneric());
+		$importJobs->addScalar("source", new UserValue());
+		$importJobs->addScalar("target", new UserValue());
 		
 		
 		$importMain = new ImportGeneric();
-		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addScalar("scalar", new UserValue());
 		$importMain->addImportList("jobs", $importJobs);
 		
 
 		$import = new Import($array, $importMain);
 		$this->assertEquals($array, $import->getArray());
 	}
-
+	
+	
 	function testImportListOptional() {
 		$array = array();
 		$array["scalar"] = "value";
 
 		$importJobs = new ImportGeneric();
-		$importJobs->addScalar("source", new ScalarGeneric());
-		$importJobs->addScalar("target", new ScalarGeneric());
+		$importJobs->addScalar("source", UserValue::optional());
+		$importJobs->addScalar("target", UserValue::optional());
 		
 		
 		$importMain = new ImportGeneric();
-		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addScalar("scalar", new UserValue());
 		$importMain->addImportList("jobs", $importJobs);
 		
 		$import = new Import($array, $importMain);
@@ -385,51 +440,48 @@ class ImportTest extends TestCase {
 		$result["jobs"][0]["source"] = "/home/";
 		$result["jobs"][0]["target"] = "/backup/";
 		
-		$defaulted = new ScalarGeneric();
-		$defaulted->setDefault("/home/");
+		$defaulted = new UserValue();
+		$defaulted->setValue("/home/");
 		$importJobs = new ImportGeneric();
 		
 		$importJobs->addScalar("source", $defaulted);
 		
-		$defaulted = new ScalarGeneric();
-		$defaulted->setDefault("/backup/");
+		$defaulted = new UserValue();
+		$defaulted->setValue("/backup/");
 		$importJobs->addScalar("target", $defaulted);
 		
 		
 		$importMain = new ImportGeneric();
-		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addScalar("scalar", new UserValue());
 		$importMain->addImportList("jobs", $importJobs);
 		
 		$import = new Import($array, $importMain);
 		$this->assertEquals($result, $import->getArray());
 	}
-
+	
 	function testImportListMandatory() {
 		$array = array();
 		$array["scalar"] = "value";
 
-		$mandatory = new ScalarGeneric();
-		$mandatory->setMandatory();
-
 		$importJobs = new ImportGeneric();
-		$importJobs->addScalar("source", $mandatory);
-		$importJobs->addScalar("target", $mandatory);
+		$importJobs->addScalar("source", UserValue::mandatory());
+		$importJobs->addScalar("target", UserValue::mandatory());
 		
 		
 		$importMain = new ImportGeneric();
-		$importMain->addScalar("scalar", new ScalarGeneric());
+		$importMain->addScalar("scalar", new UserValue());
 		$importMain->addImportList("jobs", $importJobs);
 		
 		$import = new Import($array, $importMain);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("[\"jobs\"][][\"source\"] is missing from array");
+		$this->expectExceptionMessage("[\"jobs\"][][\"source\"]: value is mandatory");
 		$import->getArray();
 	}
 
 	
 	function testRecursion() {
 		$array["level1"]["level2"]["level3"]["scalar"] = "15";
-		$importScalar = new ScalarGeneric();
+		$importScalar = new UserValue();
 		#$importScalar->setMandatory();
 		
 		
@@ -449,12 +501,12 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 	
+	
 	function testRecursionError() {
 		$array = array();
 		$array["level1"]["level2"]["level3"] = array();
 		
-		$importScalar = new ScalarGeneric();
-		$importScalar->setMandatory();
+		$importScalar = new UserValue();
 		
 		
 		$level3 = new ImportGeneric();
@@ -471,17 +523,18 @@ class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importModel);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("[\"level1\"][\"level2\"][\"level3\"][\"scalar\"] is missing from array");
+		$this->expectExceptionMessage("[\"level1\"][\"level2\"][\"level3\"][\"scalar\"]: value is mandatory");
 		$import->getArray();
 	}
+
 	
 	
 	function testUnexpected() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie", "beak"=>"nice");
 		$result = array("name"=>"Maggie", "species"=>"Magpie");
 		$importGeneric = new ImportGeneric();
-		$importGeneric->addScalar("name", new ScalarGeneric());
-		$importGeneric->addScalar("species", new ScalarGeneric());
+		$importGeneric->addScalar("name", new UserValue());
+		$importGeneric->addScalar("species", new UserValue());
 		
 		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
