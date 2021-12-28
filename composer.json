@@ -3,19 +3,23 @@
 	"repositories": [
 		{
 			"type": "vcs",
-			"url": "https://github.com/DarthCorvidus/plibv4-validate"
+			"url": "https://github.com/DarthCorvidus/plibv4-validate",
+			"no-api": true
 		},
 		{
 			"type": "vcs",
-			"url": "https://github.com/DarthCorvidus/plibv4-convert"
+			"url": "https://github.com/DarthCorvidus/plibv4-convert",
+			"no-api": true
 		},
 		{
 			"type": "vcs",
-			"url": "https://github.com/DarthCorvidus/plibv4-assert"
+			"url": "https://github.com/DarthCorvidus/plibv4-assert",
+			"no-api": true
 		},
 		{
 			"type": "vcs",
-			"url": "https://github.com/DarthCorvidus/plibv4-uservalue"
+			"url": "https://github.com/DarthCorvidus/plibv4-uservalue",
+			"no-api": true
 		}
 	],
 	"name": "plibv4/import",
