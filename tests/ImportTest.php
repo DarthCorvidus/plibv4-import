@@ -537,7 +537,7 @@ class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("[\"beak\"] with value 'nice' is not expected in array");
+		$this->expectExceptionMessage("Unexpected key [\"beak\"] in array");
 		$import->getArray();
 	}
 }
