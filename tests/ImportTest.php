@@ -59,7 +59,6 @@ class ImportTest extends TestCase {
 
 	function testMandatoryEmpty() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
-		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", UserValue::asMandatory());
 		$importGeneric->addScalar("species", UserValue::asMandatory());
@@ -79,13 +78,12 @@ class ImportTest extends TestCase {
 		$validate->setValidate(new ValidateTime());
 		$importGeneric->addScalar("maxDuration", $validate);
 		
-		$importGeneric = new Import($array, $importGeneric);
-		$this->assertEquals($importGeneric->getArray(), $result);
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($import->getArray(), $result);
 	}
 
 	function testImportScalarValidateEmpty() {
 		$array = array("name"=>"Maggie");
-		$result = array("name"=>"Maggie");
 		
 		$validatedScalar = UserValue::asOptional();
 		$validatedScalar->setValidate(new ValidateDate(ValidateDate::ISO));
@@ -100,17 +98,16 @@ class ImportTest extends TestCase {
 
 	function testValidateFail() {
 		$array = array("maxDuration"=>"4h");
-		$result = array("maxDuration"=>"04:00:00");
 
 		$importGeneric = new ImportGeneric();
 		$validate = UserValue::asMandatory();
 		$validate->setValidate(new ValidateTime());
 		$importGeneric->addScalar("maxDuration", $validate);
 		
-		$importGeneric = new Import($array, $importGeneric);
+		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
-		$importGeneric->getArray();
+		$import->getArray();
 	}
 	
 	function testValidateDefaulted() {
@@ -122,8 +119,8 @@ class ImportTest extends TestCase {
 		$validate->setValue("08:00:00");
 		$importGeneric->addScalar("maxDuration", $validate);
 		
-		$importGeneric = new Import(array(), $importGeneric);
-		$this->assertEquals($importGeneric->getArray(), $result);
+		$import = new Import(array(), $importGeneric);
+		$this->assertEquals($import->getArray(), $result);
 	}
 	
 	function testValidateDefaultedFail() {
@@ -134,10 +131,10 @@ class ImportTest extends TestCase {
 		$validate->setValue("8h");
 		$importGeneric->addScalar("maxDuration", $validate);
 		
-		$importGeneric = new Import(array(), $importGeneric);
+		$import = new Import(array(), $importGeneric);
 		$this->expectException(ImportException::class);
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
-		$importGeneric->getArray();
+		$import->getArray();
 	}
 	
 	function testConvert() {
@@ -148,8 +145,8 @@ class ImportTest extends TestCase {
 		$convert = UserValue::asMandatory();
 		$convert->setConvert(new ConvertTime(ConvertTime::HMS, ConvertTime::SECONDS));
 		$importGeneric->addScalar("maxDuration", $convert);
-		$importGeneric = new Import($array, $importGeneric);
-		$this->assertEquals($importGeneric->getArray(), $result);
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($import->getArray(), $result);
 		
 	}
 
@@ -161,8 +158,9 @@ class ImportTest extends TestCase {
 		$convert->setConvert(new ConvertTime(ConvertTime::HMS, ConvertTime::SECONDS));
 		$importGeneric->addScalar("key", UserValue::asMandatory());
 		$importGeneric->addScalar("maxDuration", $convert);
-		$importGeneric = new Import($array, $importGeneric);
-		$this->assertEquals($importGeneric->getArray(), $array);
+		
+		$import = new Import($array, $importGeneric);
+		$this->assertEquals($import->getArray(), $array);
 		
 	}
 
@@ -440,15 +438,17 @@ class ImportTest extends TestCase {
 		$result["jobs"][0]["source"] = "/home/";
 		$result["jobs"][0]["target"] = "/backup/";
 		
-		$defaulted = UserValue::asMandatory();
-		$defaulted->setValue("/home/");
 		$importJobs = new ImportGeneric();
 		
-		$importJobs->addScalar("source", $defaulted);
+		$source = UserValue::asMandatory();
+		$source->setValue("/home/");
 		
-		$defaulted = UserValue::asMandatory();
-		$defaulted->setValue("/backup/");
-		$importJobs->addScalar("target", $defaulted);
+		
+		$importJobs->addScalar("source", $source);
+		
+		$target = UserValue::asMandatory();
+		$target->setValue("/backup/");
+		$importJobs->addScalar("target", $target);
 		
 		
 		$importMain = new ImportGeneric();
@@ -531,14 +531,13 @@ class ImportTest extends TestCase {
 	
 	function testUnexpected() {
 		$array = array("name"=>"Maggie", "species"=>"Magpie", "beak"=>"nice");
-		$result = array("name"=>"Maggie", "species"=>"Magpie");
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", UserValue::asMandatory());
 		$importGeneric->addScalar("species", UserValue::asMandatory());
 		
 		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("[\"beak\"] with value 'nice' is not expected in array");
+		$this->expectExceptionMessage("Unexpected key [\"beak\"] in array");
 		$import->getArray();
 	}
 }
