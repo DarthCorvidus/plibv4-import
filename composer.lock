@@ -1,0 +1,170 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "8d8caa1caa960fe5aa12b31da8966f8d",
+    "packages": [
+        {
+            "name": "plibv4/assert",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-assert",
+                "reference": "2a2f0bb1578baad6b96b1c7f7022b713c4633a9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-assert/zipball/2a2f0bb1578baad6b96b1c7f7022b713c4633a9c",
+                "reference": "2a2f0bb1578baad6b96b1c7f7022b713c4633a9c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests"
+                ],
+                "testdox": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests"
+                ]
+            },
+            "time": "2023-12-09T19:48:52+00:00"
+        },
+        {
+            "name": "plibv4/convert",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-convert",
+                "reference": "5830a5003fb1e9a44e1220a16ff6cd35fd310112"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-convert/zipball/5830a5003fb1e9a44e1220a16ff6cd35fd310112",
+                "reference": "5830a5003fb1e9a44e1220a16ff6cd35fd310112",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/assert": "dev-main"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests"
+                ],
+                "testdox": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests"
+                ]
+            },
+            "time": "2023-07-08T15:29:57+00:00"
+        },
+        {
+            "name": "plibv4/uservalue",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-uservalue",
+                "reference": "05583dedfcd584c14880563a0dd270be09c5c02c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-uservalue/zipball/05583dedfcd584c14880563a0dd270be09c5c02c",
+                "reference": "05583dedfcd584c14880563a0dd270be09c5c02c",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/convert": "dev-main",
+                "plibv4/validate": "dev-main"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests"
+                ],
+                "testdox": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests"
+                ]
+            },
+            "time": "2023-07-08T16:09:50+00:00"
+        },
+        {
+            "name": "plibv4/validate",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-validate",
+                "reference": "dc95f073019d81a864b4dad15f1e4a31250b84d6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-validate/zipball/dc95f073019d81a864b4dad15f1e4a31250b84d6",
+                "reference": "dc95f073019d81a864b4dad15f1e4a31250b84d6",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/assert": "dev-main"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests"
+                ],
+                "testdox": [
+                    "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests"
+                ]
+            },
+            "time": "2023-07-08T16:02:12+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "plibv4/convert": 20,
+        "plibv4/validate": 20,
+        "plibv4/assert": 20,
+        "plibv4/uservalue": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
