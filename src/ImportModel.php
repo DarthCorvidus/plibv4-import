@@ -24,15 +24,16 @@ interface ImportModel {
 	 * Get scalar model
 	 * 
 	 * Return the scalar model for a specific array key.
-	 * @param type $name
+	 * @param string $name
 	 */
-	function getScalarModel($name): UserValue;
+	function getScalarModel(string $name): UserValue;
 	
 	/**
 	 * Get scalar list names
 	 * 
 	 * Return a list of names that should be imported as an array containing
 	 * scalar values.
+	 * @return list<string> List of names
 	 */
 	function getScalarListNames(): array;
 	
@@ -40,9 +41,9 @@ interface ImportModel {
 	 * Get Scalar List model
 	 * 
 	 * Return a scalar model to be applied to the list below $name.
-	 * @param type $name
+	 * @param string $name
 	 */
-	function getScalarListModel($name): UserValue;
+	function getScalarListModel(string $name): UserValue;
 	
 	/**
 	 * Get Import Names
@@ -51,6 +52,7 @@ interface ImportModel {
 	 * basically an import model within an import model, to account for nested
 	 * associative arrays such as $array["birth"]["location"] = "New York",
 	 * $array["birth"]["time"] = "18:15:00".
+	 * @return list<string>
 	 */
 	function getImportNames(): array;
 	/**
@@ -58,15 +60,16 @@ interface ImportModel {
 	 * 
 	 * Return an import model to be applied to the associative array below
 	 * $name.
-	 * @param type $name
+	 * @param string $name
 	 */
-	function getImportModel($name): ImportModel;
+	function getImportModel(string $name): ImportModel;
 	
 	/**
 	 * Get Import List Names
 	 * 
 	 * Get a list of names that should be imported as a numeric array containing
 	 * associative arrays.
+	 * @return list<string>
 	 */
 	function getImportListNames(): array;
 	/**
@@ -74,7 +77,8 @@ interface ImportModel {
 	 * 
 	 * Returns an import model which will be applied to each entry of a list
 	 * below an array key $name.
-	 * @param type $name
+	 * @param string $name
+	 * @return ImportModel
 	 */
-	function getImportListModel($name): ImportModel;
+	function getImportListModel(string $name): ImportModel;
 }

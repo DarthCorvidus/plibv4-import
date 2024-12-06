@@ -5,11 +5,15 @@
  * @license LGPL
  */
 class ImportGeneric implements ImportModel {
+	/** @var array<string, UserValue> */
 	private $scalarModels = array();
+	/** @var array<string, ImportModel> */
 	private $importModel = array();
-	private $scalarList = array();
-	private $importList = array();
-	function addScalar($name, UserValue $model) {
+	/** @var array<string, UserValue> */
+	private array $scalarList = array();
+	/** @var array<string, ImportModel> */
+	private array $importList = array();
+	function addScalar(string $name, UserValue $model): void {
 		$this->scalarModels[$name] = $model;
 	}
 	
@@ -21,7 +25,7 @@ class ImportGeneric implements ImportModel {
 		return array_keys($this->scalarModels);
 	}
 
-	public function addImportModel($name, ImportModel $import) {
+	public function addImportModel(string $name, ImportModel $import): void {
 		$this->importModel[$name] = $import;
 	}
 	
@@ -34,19 +38,22 @@ class ImportGeneric implements ImportModel {
 		return array_keys($this->importModel);
 	}
 
-	public function addScalarList($name, UserValue $model) {
+	public function addScalarList(string $name, UserValue $model): void {
 		$this->scalarList[$name] = $model;
 	}
 	
-	public function getScalarListModel($name): UserValue {
+	public function getScalarListModel(string $name): UserValue {
 		return $this->scalarList[$name];
 	}
-
+	
+	/**
+	 * @return list<string>
+	 */
 	public function getScalarListNames(): array {
 		return array_keys($this->scalarList);
 	}
 
-	public function addImportList($name, ImportModel $model) {
+	public function addImportList(string $name, ImportModel $model): void {
 		$this->importList[$name] = $model;
 	}
 	
