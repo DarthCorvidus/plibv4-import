@@ -30,18 +30,20 @@
 			"plibv4/uservalue": "dev-main"
 	},
 	"require-dev": {
-			"phpunit/phpunit": "^9"		
+		"vimeo/psalm": "^6",
+		"phpunit/phpunit": "^9"
 	},
 	"autoload": {
         "classmap": ["src/"]
     },
 	"scripts": {
 		"test": "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests",
-		"testdox": "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests"
+		"testdox": "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests",
+		"psalm": "./vendor/bin/psalm --show-info=true --no-cache"
 	},
 	"config": {
 		"platform": {
-			"php": "7.4"
+			"php": "8.2"
 		}
 	}
 }
