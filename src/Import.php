@@ -12,10 +12,11 @@
  * values, mandatory values, validators and conversions.
  */
 class Import {
-	private $array = array();
-	private $imported = array();
-	private $model;
-	private $path = array();
+	private array $array = array();
+	private array $imported = array();
+	private ImportModel $model;
+	/** @var list<string> */
+	private array $path = array();
 	/**
 	 * Construct with the array you want to import from and an import model.
 	 * @param array $array
@@ -26,7 +27,7 @@ class Import {
 		$this->model = $model;
 	}
 	
-	private function setPath(array $path) {
+	private function setPath(array $path): void {
 		$this->path = $path;
 	}
 	
@@ -34,7 +35,7 @@ class Import {
 	return $this->path;
 	}
 	
-	private function getErrorPath($name):string {
+	private function getErrorPath(string $name):string {
 		$path = $this->path;
 		$path[] = $name;
 		$niced = array();
@@ -49,7 +50,7 @@ class Import {
 	}
 	
 	
-	private function checkUnexpected() {
+	private function checkUnexpected(): void {
 		foreach($this->array as $key => $value) {
 			if(!isset($this->imported[$key]) and is_scalar($value)) {
 				throw new ImportException("Unexpected key ".$this->getErrorPath($key)." in array");
@@ -61,7 +62,7 @@ class Import {
 		}
 	}
 	
-	private function noValue($key) {
+	private function noValue($key): bool {
 		if(!isset($this->array[$key])) {
 			return true;
 		}
@@ -74,7 +75,7 @@ class Import {
 	return false;
 	}
 	
-	private function importScalars() {
+	private function importScalars(): void {
 		foreach($this->model->getScalarNames() as $value) {
 			try {
 				$userValue = $this->model->getScalarModel($value);
@@ -93,7 +94,7 @@ class Import {
 		}
 	}
 	
-	private function importDictionaries() {
+	private function importDictionaries(): void {
 		foreach($this->model->getImportNames() as $name) {
 			$mypath = $this->getPath();
 			$mypath[] = $name;
@@ -117,13 +118,13 @@ class Import {
 		}
 	}
 	
-	private function importLists() {
+	private function importLists(): void {
 		foreach($this->model->getScalarListNames() as $name) {
 			$this->importList($name);
 		}
 	}
 	
-	private function importList(string $name) {
+	private function importList(string $name): void {
 		$userValue = $this->model->getScalarListModel($name);
 		
 		try {
@@ -151,7 +152,7 @@ class Import {
 		}
 	}
 
-	private function importDictionaryList() {
+	private function importDictionaryList(): void {
 		foreach($this->model->getImportListNames() as $name) {
 			$mypath = $this->getPath();
 			$mypath[] = $name;
@@ -186,11 +187,11 @@ class Import {
 	 * for missing or unexpected values (values that do not exist in import
 	 * model). Throws import exception if anything goes awry; will throw through
 	 * Exceptions other than ValidateException, however.
-	 * @return type
+	 * @return array<mixed, mixed>
 	 * @throws ImportException
 	 */
-	function getArray() {
-		if($this->imported==array()) {
+	function getArray(): array {
+		if($this->imported===array()) {
 			$this->importScalars();
 			$this->importLists();
 			
