@@ -1,0 +1,227 @@
+<?php
+declare(strict_types=1);
+use PHPUnit\Framework\TestCase;
+/**
+ * @copyright (c) 2025, Claus-Christoph Küthe
+ * @author Claus-Christoph Küthe <floss@vm01.telton.de>
+ * @license LGPL
+ */
+
+/**
+ * Unit tests for ArrayFetch
+ */
+class ArrayFetchTest extends TestCase {
+	static function getExample(): array {
+		$example = [];
+		$example["name"] = "Joe";
+		$example["surname"] = "Doe";
+		$example["height"] = "182";
+		$example["gender"] = "m";
+		$example["weight"] = 82.3;
+		$example["pastime"] = array("gaming", "walking", "travelling");
+		$example["born"] = "1970-07-03";
+		$example["died"] = null;
+		$example["empty"] = "";
+		$career[0]["from"] = "2000-01-01";
+		$career[0]["to"] = "2002-31-01";
+		$career[0]["description"] = "Warp Drive Engineer";
+		$career[1]["from"] = "2003-01-01";
+		$career[1]["to"] = "2010-31-12";
+		$career[1]["description"] = "Chief Engineer";
+		$example["career"] = $career;
+	return $example;
+	}
+	
+	function testConstruct(): void {
+		$example = self::getExample();
+		$access = new ArrayFetch($example);
+		$this->assertInstanceOf(ArrayFetch::class, $access);
+	}
+	
+	function testString(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertSame("Joe", $fetch->asString("name"));
+		$this->assertSame("182", $fetch->asString("height"));
+		$this->assertSame("82.3", $fetch->asString("weight"));
+	}
+	
+	function testDefaultedString() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertSame("alive", $fetch->asString("state", "alive"));
+	}
+	
+	function testStringMissingKey() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(OutOfBoundsException::class);
+		$this->assertSame("nationality", $fetch->asString("nationality"));
+	}
+	
+	function testStringNull() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$this->assertSame("died", $fetch->asString("died"));
+	}
+
+	function testStringArray() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$fetch->asString("pastime");
+	}
+	
+	function testInt() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertSame(182, $fetch->asInt("height"));
+	}
+
+	function testDefaultedInt() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertSame(90, $fetch->asInt("whateva", 90));
+	}
+
+	function testIntMissingKey() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(OutOfBoundsException::class);
+		$this->assertSame("nationality", $fetch->asInt("nationality"));
+	}
+	
+	function testIntNull() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$this->assertSame("died", $fetch->asInt("died"));
+	}
+
+	function testIntArray() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$fetch->asInt("pastime");
+	}
+
+	function testIntBogus() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$fetch->asInt("name");
+	}
+	
+	function testFloat(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertSame(82.3, $fetch->asFloat("weight"));
+		$this->assertSame(182.0, $fetch->asFloat("height"));
+	}
+
+	function testDefaultedFloat(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertSame(99.9, $fetch->asFloat("unknown", 99.9));
+	}
+
+	function testFloatMissingKey(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(OutOfBoundsException::class);
+		$fetch->asFloat("nationality");
+	}
+
+	function testFloatNull(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$fetch->asFloat("died");
+	}
+
+	function testFloatArray(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$fetch->asFloat("pastime");
+	}
+
+	function testFloatBogus(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$fetch->asFloat("name");
+	}
+	
+	function testArray(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertSame($example["pastime"], $fetch->asArray("pastime"));
+		$this->assertSame($example["career"], $fetch->asArray("career"));
+	}
+	
+	function testArrayNotSet(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(OutOfBoundsException::class);
+		$fetch->asArray("passtime");
+	}
+	
+	function testArrayBogus(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$fetch->asArray("height");
+	}
+	
+	function testArrayFetch(): void {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$fetchPastime = new ArrayFetch($example["pastime"]);
+		$fetchCareer = new ArrayFetch($example["career"]);
+		$this->assertEquals($fetchPastime, $fetch->asArrayFetch("pastime"));
+		$this->assertEquals($fetchCareer, $fetch->asArrayFetch("career"));
+	}
+	
+	function testByUserValue(): void {
+		$date = UserValue::asMandatory();
+		$date->setValidate(new ValidateDate(ValidateDate::ISO));
+		$date->setConvert(new ConvertDate(ConvertDate::ISO, ConvertDate::GERMAN));
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->assertEquals("03.07.1970", $fetch->byUserValue("born", $date));
+	}
+	
+	function testByUserValueBogus(): void {
+		$date = UserValue::asMandatory();
+		$date->setValidate(new ValidateDate(ValidateDate::ISO));
+		$date->setConvert(new ConvertDate(ConvertDate::ISO, ConvertDate::GERMAN));
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(ValidateException::class);
+		$this->assertEquals("03.07.1970", $fetch->byUserValue("name", $date));
+	}
+
+	function testByUserValueMandatory(): void {
+		$date = UserValue::asMandatory();
+		$date->setValidate(new ValidateDate(ValidateDate::ISO));
+		$date->setConvert(new ConvertDate(ConvertDate::ISO, ConvertDate::GERMAN));
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(MandatoryException::class);
+		$this->assertEquals("03.07.1970", $fetch->byUserValue("empty", $date));
+	}
+
+	function testByUserValueMandatoryDefaulted(): void {
+		$date = UserValue::asMandatory();
+		$date->setDefault("1970-07-03");
+		$date->setValidate(new ValidateDate(ValidateDate::ISO));
+		$date->setConvert(new ConvertDate(ConvertDate::ISO, ConvertDate::GERMAN));
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(MandatoryException::class);
+		$this->assertEquals("03.07.1970", $fetch->byUserValue("empty", $date));
+	}
+
+}
