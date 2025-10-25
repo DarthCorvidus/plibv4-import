@@ -13,9 +13,10 @@
  */
 class Import {
 	private array $array = array();
+	private array $scalars = array();
 	private array $imported = array();
 	private ImportModel $model;
-	/** @var list<string> */
+	/** @var list<string|null> */
 	private array $path = array();
 	/**
 	 * Construct with the array you want to import from and an import model.
@@ -26,7 +27,7 @@ class Import {
 		$this->array = $array;
 		$this->model = $model;
 	}
-	
+
 	private function setPath(array $path): void {
 		$this->path = $path;
 	}
@@ -62,7 +63,7 @@ class Import {
 		}
 	}
 	
-	private function noValue($key): bool {
+	private function noValue(string $key): bool {
 		if(!isset($this->array[$key])) {
 			return true;
 		}
