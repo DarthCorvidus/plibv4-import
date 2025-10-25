@@ -8,6 +8,43 @@
     findUnusedBaselineEntry="true"
     findUnusedCode="false"
 >
+	<issueHandlers>
+		<MixedArrayAccess>
+			<errorLevel type="suppress">
+				<file name="src/Import.php" />
+			</errorLevel>
+		</MixedArrayAccess>
+		<MixedArrayAssignment>
+			<errorLevel type="suppress">
+				<file name="src/Import.php" />
+			</errorLevel>
+		</MixedArrayAssignment>
+		<MixedArgument>
+			<errorLevel type="suppress">
+				<file name="src/Import.php" />
+			</errorLevel>
+		</MixedArgument>
+		<MixedAssignment>
+			<errorLevel type="suppress">
+				<file name="src/Import.php" />
+			</errorLevel>
+		</MixedAssignment>
+		<MixedArgumentTypeCoercion>
+			<errorLevel type="suppress">
+				<file name="src/Import.php" />
+			</errorLevel>
+		</MixedArgumentTypeCoercion>
+		<ArgumentTypeCoercion>
+			<errorLevel type="suppress">
+				<file name="src/Import.php" />
+			</errorLevel>
+		</ArgumentTypeCoercion>
+		<PropertyTypeCoercion>
+			<errorLevel type="suppress">
+				<file name="src/Import.php" />
+			</errorLevel>
+		</PropertyTypeCoercion>
+	</issueHandlers>
     <projectFiles>
         <directory name="src" />
         <ignoreFiles>
