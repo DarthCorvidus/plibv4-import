@@ -13,7 +13,6 @@
  */
 class Import {
 	private array $array = array();
-	private array $scalars = array();
 	private array $imported = array();
 	private ImportModel $model;
 	/** @var list<string|null> */
