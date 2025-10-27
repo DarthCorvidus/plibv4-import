@@ -49,7 +49,7 @@ class ArrayFetch {
 		}
 
 		$type = gettype($this->array[$key]);
-		if(!in_array($type, array("int", "string"))) {
+		if(!in_array($type, array("integer", "string"))) {
 			throw new \RuntimeException("invalid type to import as int: ".$type);
 		}
 		
