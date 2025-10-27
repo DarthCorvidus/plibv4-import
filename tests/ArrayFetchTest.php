@@ -38,12 +38,22 @@ class ArrayFetchTest extends TestCase {
 		$this->assertInstanceOf(ArrayFetch::class, $access);
 	}
 	
-	function testString(): void {
-		$example = self::getExample();
+	/**
+	 * @dataProvider StringProvider
+	 */
+	function testString(array $example, string $expected): void {
 		$fetch = new ArrayFetch($example);
-		$this->assertSame("Joe", $fetch->asString("name"));
-		$this->assertSame("182", $fetch->asString("height"));
-		$this->assertSame("82.3", $fetch->asString("weight"));
+		$this->assertSame($expected, $fetch->asString("key"));
+	}
+	
+	function StringProvider(): array {
+		$test = [];
+		$test[] = array(array("key" => "Dog"), "Dog");
+		$test[] = array(array("key" => "15"), "15");
+		$test[] = array(array("key" => 15), "15");
+		$test[] = array(array("key" => 15.0), "15");
+		$test[] = array(array("key" => 15.03), "15.03");
+	return $test;
 	}
 	
 	function testDefaultedString() {
