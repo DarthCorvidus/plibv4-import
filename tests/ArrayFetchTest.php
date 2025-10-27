@@ -135,7 +135,7 @@ class ArrayFetchTest extends TestCase {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame(99.9, $fetch->asFloat("unknown", 99.9));
 	}
-
+$test[] = array(array("key" => 15), 15);
 	function testFloatMissingKey(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
