@@ -82,13 +82,23 @@ class ArrayFetchTest extends TestCase {
 		$this->expectException(RuntimeException::class);
 		$fetch->asString("pastime");
 	}
-	
-	function testInt() {
-		$example = self::getExample();
+
+	/**
+	 * @dataProvider intProvider
+	 */
+	function testInt($example, $expected) {
 		$fetch = new ArrayFetch($example);
-		$this->assertSame(182, $fetch->asInt("height"));
+		$this->assertSame($expected, $fetch->asInt("key"));
 	}
 
+	function IntProvider(): array {
+		$test = [];
+		$test[] = array(array("key" => "15"), 15);
+		$test[] = array(array("key" => 15), 15);
+		$test[] = array(array("key" => 0xF), 15);
+	return $test;
+	}
+	
 	function testDefaultedInt() {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
@@ -122,12 +132,20 @@ class ArrayFetchTest extends TestCase {
 		$this->expectException(RuntimeException::class);
 		$fetch->asInt("name");
 	}
-	
-	function testFloat(): void {
-		$example = self::getExample();
+	/**
+	 * 
+	 * @dataProvider FloatProvider
+	 */
+	function testFloat($example, $expected) {
 		$fetch = new ArrayFetch($example);
-		$this->assertSame(82.3, $fetch->asFloat("weight"));
-		$this->assertSame(182.0, $fetch->asFloat("height"));
+		$this->assertSame($expected, $fetch->asFloat("key"));
+	}
+	
+	function FloatProvider(): array {
+		$test = [];
+		$test[] = array(array("key" => "15.03"), 15.03);
+		$test[] = array(array("key" => 15), 15.0);
+	return $test;
 	}
 
 	function testDefaultedFloat(): void {
@@ -164,11 +182,19 @@ class ArrayFetchTest extends TestCase {
 		$fetch->asFloat("name");
 	}
 	
-	function testArray(): void {
-		$example = self::getExample();
+	/**
+	 * 
+	 * @dataProvider ArrayProvider
+	 */
+	function testArray($example, $expected) {
 		$fetch = new ArrayFetch($example);
-		$this->assertSame($example["pastime"], $fetch->asArray("pastime"));
-		$this->assertSame($example["career"], $fetch->asArray("career"));
+		$this->assertSame($expected, $fetch->asArray("key"));
+	}
+	
+	function ArrayProvider(): array {
+		$test = [];
+		$test[] = array(array("key" => [1,2,3]), [1,2,3]);
+	return $test;
 	}
 	
 	function testArrayNotSet(): void {
