@@ -18,6 +18,12 @@ class ArrayFetch {
 		return array_key_exists($key, $this->array);
 	}
 	
+	private function assertKeyExists(string $key): void {
+		if(!$this->hasKey($key)) {
+			throw new \OutOfBoundsException("key $key not available in array");
+		}
+	}
+	
 	function asString(string $key, ?string $default = null): string {
 		if(!$this->hasKey($key)) {
 		    if ($default === null) {
@@ -100,6 +106,20 @@ class ArrayFetch {
     return $value;
 	}
 	
+	public function asBool(string $key, ?bool $default = null): bool {
+		if (!$this->hasKey($key)) {
+			if ($default === null) {
+				throw new \OutOfBoundsException("key $key not available in array");
+			}
+			return $default;
+		}
+		$value = $this->array[$key];
+		if(!is_bool($this->array[$key])) {
+			throw new \RuntimeException("invalid type to import as bool: ".gettype($value));
+		}
+	return $value;
+	}
+	
 	function asArrayFetch(string $key): ArrayFetch {
 		$array = $this->asArray($key);
 	return new ArrayFetch($array);
@@ -109,5 +129,15 @@ class ArrayFetch {
 		$string = $this->asString($key, "");
 		$userValue->setValue($string);
 	return $userValue->getValue();
+	}
+	
+	public function isNull(string $key): bool {
+		$this->assertKeyExists($key);
+		return $this->array[$key] === null;
+	}
+	
+	public function isBool(string $key): bool {
+		$this->assertKeyExists($key);
+	return is_bool($this->array[$key]);
 	}
 }

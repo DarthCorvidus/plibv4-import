@@ -39,6 +39,42 @@ class ArrayFetchTest extends TestCase {
 	}
 	
 	/**
+	 * @dataProvider hasKeyProvider 
+	 * @return void
+	 */
+	function testHasKey(array $example, bool $expected): void {
+		$fetch = new ArrayFetch($example);
+		$this->assertSame($expected, $fetch->hasKey("exists"));
+	}
+	
+	function hasKeyProvider(): array {
+		$test = [];
+		$test[] = array(array("exists" => "yes"), true);
+		$test[] = array(array("exists" => true), true);
+		$test[] = array(array("exists" => null), true);
+		$test[] = array(array("exists" => ""), true);
+		$test[] = array(array("exists" => 0), true);
+		$test[] = array(array(), false);
+	return $test;
+	}
+
+	/**
+	 * @dataProvider asBoolProvider 
+	 * @return void
+	 */
+	public function testBool(array $example, bool $expected): void {
+		$fetch = new ArrayFetch($example);
+		$this->assertSame($expected, $fetch->asBool("boolean"));
+	}
+	
+	public function asBoolProvider(): array {
+		$test = [];
+		$test[] = array(array("boolean" => true), true);
+		$test[] = array(array("boolean" => false), false);
+	return $test;
+	}
+	
+	/**
 	 * @dataProvider StringProvider
 	 */
 	function testString(array $example, string $expected): void {
@@ -260,4 +296,52 @@ class ArrayFetchTest extends TestCase {
 		$this->assertEquals("03.07.1970", $fetch->byUserValue("empty", $date));
 	}
 
+	/**
+	 * @dataProvider isNullProvider
+	 * @return void
+	 */
+	function testIsNull(array $example, bool $expected): void {
+		$fetch = new ArrayFetch($example);
+		$this->assertSame($expected, $fetch->isNull("exists"));
+	}
+	
+	function isNullProvider(): array {
+		$test = [];
+		$test[] = array(array("exists" => null), true);
+		$test[] = array(array("exists" => ""), false);
+		$test[] = array(array("exists" => 0), false);
+	return $test;
+	}
+
+	function testIsNullNoKey(): void {
+		$fetch = new ArrayFetch(array());
+		$this->expectException(\OutOfBoundsException::class);
+		$fetch->isNull("madeup");
+	}
+	
+	/**
+	 * @dataProvider isBoolProvider
+	 * @return void
+	 */
+	function testIsBool(array $example, bool $expected): void {
+		$fetch = new ArrayFetch($example);
+		$this->assertSame($expected, $fetch->isBool("exists"));
+	}
+	
+	function isBoolProvider(): array {
+		$test = [];
+		$test[] = array(array("exists" => null), false);
+		$test[] = array(array("exists" => ""), false);
+		$test[] = array(array("exists" => 0), false);
+		$test[] = array(array("exists" => 1), false);
+		$test[] = array(array("exists" => true), true);
+		$test[] = array(array("exists" => false), true);
+	return $test;
+	}
+	
+	function testIsBoolNoKey(): void {
+		$fetch = new ArrayFetch(array());
+		$this->expectException(\OutOfBoundsException::class);
+		$fetch->isBool("madeup");
+	}
 }
