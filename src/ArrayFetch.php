@@ -113,11 +113,10 @@ class ArrayFetch {
 			}
 			return $default;
 		}
-		$value = $this->array[$key];
 		if(!is_bool($this->array[$key])) {
-			throw new \RuntimeException("invalid type to import as bool: ".gettype($value));
+			throw new \RuntimeException("invalid type to import as bool: ".gettype($this->array[$key]));
 		}
-	return $value;
+	return $this->array[$key];
 	}
 	
 	function asArrayFetch(string $key): ArrayFetch {
