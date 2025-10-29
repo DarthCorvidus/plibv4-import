@@ -344,4 +344,28 @@ class ArrayFetchTest extends TestCase {
 		$this->expectException(\OutOfBoundsException::class);
 		$fetch->isBool("madeup");
 	}
+
+	/**
+	 * @dataProvider countProvider
+	 * @return void
+	 */
+	function testCount($example, $expected): void {
+		$fetch = new ArrayFetch($example);
+		$this->assertSame($expected, $fetch->count());
+	}
+	
+	function countProvider(): array {
+		$test = [];
+		$test[] = array(array("one" => 1, "two" => 2, "three" => 3), 3);
+		$test[] = array(array(), 0);
+		$test[] = array(array(1, 2, 3), 3);
+	return $test;
+	}
+	
+	function testSetArray(): void {
+		$fetch = new ArrayFetch([0, 1, 2, 3]);
+		$this->assertSame(2, $fetch->asInt("2"));
+		$fetch->setArray([4, 5, 6, 7]);
+		$this->assertSame(6, $fetch->asInt("2"));
+	}
 }
