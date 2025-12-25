@@ -4,7 +4,8 @@
  * @author Claus-Christoph Küthe <floss@vm01.telton.de>
  * @license LGPL
  */
-
+namespace plibv4\import;
+use RuntimeException;
 /**
  * Description of ImportException
  *

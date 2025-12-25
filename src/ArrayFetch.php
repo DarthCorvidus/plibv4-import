@@ -4,7 +4,8 @@
  * @author Claus-Christoph Küthe <floss@vm01.telton.de>
  * @license LGPL
  */
-
+namespace plibv4\import;
+use plibv4\uservalue\UserValue;
 /**
  * ArrayFetch is a less complicated alternative to Import, which allows for
  * typed import of array values (great to smash down Psalm 'Mixed' findings).

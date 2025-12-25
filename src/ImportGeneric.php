@@ -4,6 +4,8 @@
  * @author Claus-Christoph Küthe <floss@vm01.telton.de>
  * @license LGPL
  */
+namespace plibv4\import;
+use plibv4\uservalue\UserValue;
 class ImportGeneric implements ImportModel {
 	/** @var array<string, UserValue> */
 	private $scalarModels = array();
