@@ -172,6 +172,7 @@ final class ImportTest extends TestCase {
 	}
 
 	function testImportDictionary(): void {
+		$input = [];
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		$input["retention"]["daily"] = "180";
@@ -196,6 +197,7 @@ final class ImportTest extends TestCase {
 	}
 
 	function testImportDictionaryOptional(): void {
+		$input = [];
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		
@@ -215,6 +217,7 @@ final class ImportTest extends TestCase {
 	}
 	
 	function testImportDictionaryMandatory(): void {
+		$input = [];
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		
@@ -236,6 +239,7 @@ final class ImportTest extends TestCase {
 	}
 	
 	function testImportDictionaryDefaulted(): void {
+		$input = [];
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		$result = $input;
@@ -487,6 +491,7 @@ final class ImportTest extends TestCase {
 
 	
 	function testRecursion(): void {
+		$array = [];
 		$array["level1"]["level2"]["level3"]["scalar"] = "15";
 		$importScalar = UserValue::asMandatory();
 

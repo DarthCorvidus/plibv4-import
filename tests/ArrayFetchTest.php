@@ -29,6 +29,7 @@ final class ArrayFetchTest extends TestCase {
 		$example["born"] = "1970-07-03";
 		$example["died"] = null;
 		$example["empty"] = "";
+		$career = [];
 		$career[0]["from"] = "2000-01-01";
 		$career[0]["to"] = "2002-31-01";
 		$career[0]["description"] = "Warp Drive Engineer";
@@ -129,7 +130,7 @@ final class ArrayFetchTest extends TestCase {
 	/**
 	 * @dataProvider intProvider
 	 */
-	function testInt($example, $expected): void {
+	function testInt(array $example, int $expected): void {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->asInt("key"));
 	}
@@ -178,7 +179,7 @@ final class ArrayFetchTest extends TestCase {
 	/**
 	 * @dataProvider FloatProvider
 	 */
-	function testFloat($example, $expected): void {
+	function testFloat(array $example, float $expected): void {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->asFloat("key"));
 	}
@@ -227,7 +228,7 @@ final class ArrayFetchTest extends TestCase {
 	/**
 	 * @dataProvider ArrayProvider
 	 */
-	function testArray($example, $expected): void {
+	function testArray(array $example, array $expected): void {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->asArray("key"));
 	}
@@ -255,7 +256,12 @@ final class ArrayFetchTest extends TestCase {
 	function testArrayFetch(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
+		/** 
+		 * Could be fixed, but not necessary.
+		 * @psalm-suppress MixedArgument
+		 */
 		$fetchPastime = new ArrayFetch($example["pastime"]);
+		/** @psalm-suppress MixedArgument*/
 		$fetchCareer = new ArrayFetch($example["career"]);
 		$this->assertEquals($fetchPastime, $fetch->asArrayFetch("pastime"));
 		$this->assertEquals($fetchCareer, $fetch->asArrayFetch("career"));
@@ -354,7 +360,7 @@ final class ArrayFetchTest extends TestCase {
 	 * @dataProvider countProvider
 	 * @return void
 	 */
-	function testCount($example, $expected): void {
+	function testCount(array $example, int $expected): void {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->count());
 	}
