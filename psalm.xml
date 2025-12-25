@@ -9,11 +9,12 @@
     findUnusedCode="false"
 >
 	<issueHandlers>
-		<MixedArrayAccess>
+		<!-- deliberate choice to keep most classes un-final -->
+		<ClassMustBeFinal>
 			<errorLevel type="suppress">
-				<file name="src/Import.php" />
+				<directory name="src" />
 			</errorLevel>
-		</MixedArrayAccess>
+		</ClassMustBeFinal>
 		<MixedArrayAssignment>
 			<errorLevel type="suppress">
 				<file name="src/Import.php" />
@@ -34,11 +35,6 @@
 				<file name="src/Import.php" />
 			</errorLevel>
 		</MixedArgumentTypeCoercion>
-		<ArgumentTypeCoercion>
-			<errorLevel type="suppress">
-				<file name="src/Import.php" />
-			</errorLevel>
-		</ArgumentTypeCoercion>
 		<PropertyTypeCoercion>
 			<errorLevel type="suppress">
 				<file name="src/Import.php" />

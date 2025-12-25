@@ -17,10 +17,12 @@ class ImportGeneric implements ImportModel {
 		$this->scalarModels[$name] = $model;
 	}
 	
+	#[\Override]
 	public function getScalarModel($name): UserValue {
 		return $this->scalarModels[$name];
 	}
 
+	#[\Override]
 	public function getScalarNames():array {
 		return array_keys($this->scalarModels);
 	}
@@ -29,11 +31,13 @@ class ImportGeneric implements ImportModel {
 		$this->importModel[$name] = $import;
 	}
 	
+	#[\Override]
 	public function getImportModel($name): ImportModel {
 		return $this->importModel[$name];
 	}
 
 	
+	#[\Override]
 	public function getImportNames(): array {
 		return array_keys($this->importModel);
 	}
@@ -42,6 +46,7 @@ class ImportGeneric implements ImportModel {
 		$this->scalarList[$name] = $model;
 	}
 	
+	#[\Override]
 	public function getScalarListModel(string $name): UserValue {
 		return $this->scalarList[$name];
 	}
@@ -49,6 +54,7 @@ class ImportGeneric implements ImportModel {
 	/**
 	 * @return list<string>
 	 */
+	#[\Override]
 	public function getScalarListNames(): array {
 		return array_keys($this->scalarList);
 	}
@@ -57,10 +63,12 @@ class ImportGeneric implements ImportModel {
 		$this->importList[$name] = $model;
 	}
 	
+	#[\Override]
 	public function getImportListModel($name): ImportModel {
 		return $this->importList[$name];
 	}
 
+	#[\Override]
 	public function getImportListNames(): array {
 		return array_keys($this->importList);
 	}
