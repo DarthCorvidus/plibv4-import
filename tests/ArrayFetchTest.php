@@ -79,19 +79,19 @@ final class ArrayFetchTest extends TestCase {
 	 * @dataProvider asBoolProvider 
 	 * @return void
 	 */
-	public function testBoolDefaulted(array $example, bool $expected) {
+	public function testBoolDefaulted(array $example, bool $expected): void {
 		$fetch = new ArrayFetch(self::getExample());
 		$this->assertSame($expected, $fetch->asBool("bool", $expected));
 	}
 	
-	public function testBoolNotAvailable() {
+	public function testBoolNotAvailable(): void {
 		$fetch = new ArrayFetch(self::getExample());
 		$this->expectException(OutOfBoundsException::class);
 		$this->expectExceptionMessage("key bool not available in array");
 		$fetch->asBool("bool");
 	}
 
-	public function testBoolWrongType() {
+	public function testBoolWrongType(): void {
 		$fetch = new ArrayFetch(self::getExample());
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage("invalid type to import as bool: string");
@@ -270,7 +270,7 @@ final class ArrayFetchTest extends TestCase {
 		$fetch->asArray("passtime");
 	}
 	
-	function testArrayNull() {
+	function testArrayNull(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(RuntimeException::class);
