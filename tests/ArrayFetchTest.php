@@ -74,6 +74,29 @@ final class ArrayFetchTest extends TestCase {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->asBool("boolean"));
 	}
+
+	/**
+	 * @dataProvider asBoolProvider 
+	 * @return void
+	 */
+	public function testBoolDefaulted(array $example, bool $expected) {
+		$fetch = new ArrayFetch(self::getExample());
+		$this->assertSame($expected, $fetch->asBool("bool", $expected));
+	}
+	
+	public function testBoolNotAvailable() {
+		$fetch = new ArrayFetch(self::getExample());
+		$this->expectException(OutOfBoundsException::class);
+		$this->expectExceptionMessage("key bool not available in array");
+		$fetch->asBool("bool");
+	}
+
+	public function testBoolWrongType() {
+		$fetch = new ArrayFetch(self::getExample());
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage("invalid type to import as bool: string");
+		$fetch->asBool("name");
+	}
 	
 	public function asBoolProvider(): array {
 		$test = [];
@@ -243,13 +266,23 @@ final class ArrayFetchTest extends TestCase {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(OutOfBoundsException::class);
+		$this->expectExceptionMessage("key passtime not available in array");
 		$fetch->asArray("passtime");
+	}
+	
+	function testArrayNull() {
+		$example = self::getExample();
+		$fetch = new ArrayFetch($example);
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage("key died has type null");
+		$fetch->asArray("died");
 	}
 	
 	function testArrayBogus(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage("key height is not an array, but string");
 		$fetch->asArray("height");
 	}
 	

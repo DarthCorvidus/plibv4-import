@@ -56,10 +56,10 @@ class Import {
 	private function checkUnexpected(): void {
 		foreach($this->array as $key => $value) {
 			if(!isset($this->imported[$key]) and is_scalar($value)) {
-				throw new ImportException("Unexpected key ".$this->getErrorPath($key)." in array");
+				throw new ImportException("Unexpected scalar at key: ".$this->getErrorPath($key));
 			}
 			if(!isset($this->imported[$key]) and is_array($value)) {
-				throw new ImportException($this->getErrorPath($key)." is not expected in array");
+				throw new ImportException("Unexpected array at key: ".$this->getErrorPath($key));
 			}
 
 		}

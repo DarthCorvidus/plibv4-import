@@ -64,7 +64,7 @@ final class ImportTest extends TestCase {
 		
 	}
 
-	function testMandatoryEmpty(): void {
+	function testMandatoryMissing(): void {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", UserValue::asMandatory());
@@ -75,7 +75,7 @@ final class ImportTest extends TestCase {
 		$this->expectExceptionMessage("[\"location\"]: value is mandatory");
 		$import->getArray();
 	}
-	
+
 	function testValidate(): void {
 		$array = array("maxDuration"=>"04:00:00");
 		$result = array("maxDuration"=>"04:00:00");
@@ -549,7 +549,19 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importGeneric);
 		$this->expectException(ImportException::class);
-		$this->expectExceptionMessage("Unexpected key [\"beak\"] in array");
+		$this->expectExceptionMessage("Unexpected scalar at key: [\"beak\"]");
+		$import->getArray();
+	}
+	
+	function testUnexpectedArray(): void {
+		$array = array("name"=>"Maggie", "species"=>"Magpie", "chicks"=>array("Pecky"));
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("name", UserValue::asMandatory());
+		$importGeneric->addScalar("species", UserValue::asMandatory());
+		
+		$import = new Import($array, $importGeneric);
+		$this->expectException(ImportException::class);
+		$this->expectExceptionMessage("Unexpected array at key: [\"chicks\"]");
 		$import->getArray();
 	}
 }
