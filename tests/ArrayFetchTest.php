@@ -17,7 +17,7 @@ use OutOfBoundsException;
 /**
  * Unit tests for ArrayFetch
  */
-class ArrayFetchTest extends TestCase {
+final class ArrayFetchTest extends TestCase {
 	static function getExample(): array {
 		$example = [];
 		$example["name"] = "Joe";
@@ -99,27 +99,27 @@ class ArrayFetchTest extends TestCase {
 	return $test;
 	}
 	
-	function testDefaultedString() {
+	function testDefaultedString(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->assertSame("alive", $fetch->asString("state", "alive"));
 	}
 	
-	function testStringMissingKey() {
+	function testStringMissingKey(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(OutOfBoundsException::class);
 		$this->assertSame("nationality", $fetch->asString("nationality"));
 	}
 	
-	function testStringNull() {
+	function testStringNull(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(RuntimeException::class);
 		$this->assertSame("died", $fetch->asString("died"));
 	}
 
-	function testStringArray() {
+	function testStringArray(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(RuntimeException::class);
@@ -129,7 +129,7 @@ class ArrayFetchTest extends TestCase {
 	/**
 	 * @dataProvider intProvider
 	 */
-	function testInt($example, $expected) {
+	function testInt($example, $expected): void {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->asInt("key"));
 	}
@@ -142,44 +142,43 @@ class ArrayFetchTest extends TestCase {
 	return $test;
 	}
 	
-	function testDefaultedInt() {
+	function testDefaultedInt(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->assertSame(90, $fetch->asInt("whateva", 90));
 	}
 
-	function testIntMissingKey() {
+	function testIntMissingKey(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(OutOfBoundsException::class);
 		$this->assertSame("nationality", $fetch->asInt("nationality"));
 	}
 	
-	function testIntNull() {
+	function testIntNull(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(RuntimeException::class);
 		$this->assertSame("died", $fetch->asInt("died"));
 	}
 
-	function testIntArray() {
+	function testIntArray(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(RuntimeException::class);
 		$fetch->asInt("pastime");
 	}
 
-	function testIntBogus() {
+	function testIntBogus(): void {
 		$example = self::getExample();
 		$fetch = new ArrayFetch($example);
 		$this->expectException(RuntimeException::class);
 		$fetch->asInt("name");
 	}
 	/**
-	 * 
 	 * @dataProvider FloatProvider
 	 */
-	function testFloat($example, $expected) {
+	function testFloat($example, $expected): void {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->asFloat("key"));
 	}
@@ -226,10 +225,9 @@ class ArrayFetchTest extends TestCase {
 	}
 	
 	/**
-	 * 
 	 * @dataProvider ArrayProvider
 	 */
-	function testArray($example, $expected) {
+	function testArray($example, $expected): void {
 		$fetch = new ArrayFetch($example);
 		$this->assertSame($expected, $fetch->asArray("key"));
 	}

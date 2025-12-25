@@ -17,8 +17,8 @@ use plibv4\convert\ConvertTime;
 /**
  * Unit tests for Import
  */
-class ImportTest extends TestCase {
-	function testImportScalar() {
+final class ImportTest extends TestCase {
+	function testImportScalar(): void {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$result = array("name"=>"Maggie", "species"=>"Magpie");
 		$importGeneric = new ImportGeneric();
@@ -28,7 +28,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($import->getArray(), $result);
 	}
 	
-	function testImportScalarEmpty() {
+	function testImportScalarEmpty(): void {
 		$array = array("name"=>"Maggie");
 		$result = array("name"=>"Maggie");
 		$importGeneric = new ImportGeneric();
@@ -39,7 +39,7 @@ class ImportTest extends TestCase {
 	}
 	
 
-	function testImportScalarDefaulted() {
+	function testImportScalarDefaulted(): void {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$importGeneric = new ImportGeneric();
@@ -52,7 +52,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($import->getArray(), $result);
 	}
 
-	function testMandatorySet() {
+	function testMandatorySet(): void {
 		$array = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$result = array("name"=>"Maggie", "species"=>"Magpie", "location"=>"Europe");
 		$importGeneric = new ImportGeneric();
@@ -64,7 +64,7 @@ class ImportTest extends TestCase {
 		
 	}
 
-	function testMandatoryEmpty() {
+	function testMandatoryEmpty(): void {
 		$array = array("name"=>"Maggie", "species"=>"Magpie");
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", UserValue::asMandatory());
@@ -76,7 +76,7 @@ class ImportTest extends TestCase {
 		$import->getArray();
 	}
 	
-	function testValidate() {
+	function testValidate(): void {
 		$array = array("maxDuration"=>"04:00:00");
 		$result = array("maxDuration"=>"04:00:00");
 
@@ -89,7 +89,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($import->getArray(), $result);
 	}
 
-	function testImportScalarValidateEmpty() {
+	function testImportScalarValidateEmpty(): void {
 		$array = array("name"=>"Maggie");
 		
 		$validatedScalar = UserValue::asOptional();
@@ -103,7 +103,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 
-	function testValidateFail() {
+	function testValidateFail(): void {
 		$array = array("maxDuration"=>"4h");
 
 		$importGeneric = new ImportGeneric();
@@ -117,7 +117,7 @@ class ImportTest extends TestCase {
 		$import->getArray();
 	}
 	
-	function testValidateDefaulted() {
+	function testValidateDefaulted(): void {
 		$result = array("maxDuration"=>"08:00:00");
 
 		$importGeneric = new ImportGeneric();
@@ -130,7 +130,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($import->getArray(), $result);
 	}
 	
-	function testValidateDefaultedFail() {
+	function testValidateDefaultedFail(): void {
 		$importGeneric = new ImportGeneric();
 		$validate = UserValue::asMandatory();
 		$validate->setValidate(new ValidateTime());
@@ -144,7 +144,7 @@ class ImportTest extends TestCase {
 		$import->getArray();
 	}
 	
-	function testConvert() {
+	function testConvert(): void {
 		$array = array("maxDuration"=>"01:00:00");
 		$result = array("maxDuration"=>"3600");
 
@@ -157,7 +157,7 @@ class ImportTest extends TestCase {
 		
 	}
 
-	function testConvertEmpty() {
+	function testConvertEmpty(): void {
 		$array = array("key"=>"value");
 
 		$importGeneric = new ImportGeneric();
@@ -171,7 +171,7 @@ class ImportTest extends TestCase {
 		
 	}
 
-	function testImportDictionary() {
+	function testImportDictionary(): void {
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		$input["retention"]["daily"] = "180";
@@ -195,7 +195,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($input, $import->getArray());
 	}
 
-	function testImportDictionaryOptional() {
+	function testImportDictionaryOptional(): void {
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		
@@ -214,7 +214,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($input, $import->getArray());
 	}
 	
-	function testImportDictionaryMandatory() {
+	function testImportDictionaryMandatory(): void {
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		
@@ -235,7 +235,7 @@ class ImportTest extends TestCase {
 		$import->getArray();
 	}
 	
-	function testImportDictionaryDefaulted() {
+	function testImportDictionaryDefaulted(): void {
 		$input["source"] = "/home/";
 		$input["target"] = "/backup/";
 		$result = $input;
@@ -258,7 +258,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($result, $import->getArray());
 	}
 
-	function testScalarList() {
+	function testScalarList(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		$array["sports"][] = "soccer";
@@ -273,7 +273,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 
-	function testScalarListScalarInsteadOfList() {
+	function testScalarListScalarInsteadOfList(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		$array["sports"] = "soccer";
@@ -289,7 +289,7 @@ class ImportTest extends TestCase {
 	}
 
 	
-	function testScalarListDefaulted() {
+	function testScalarListDefaulted(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		
@@ -307,7 +307,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($result, $import->getArray());
 	}
 	
-	function testScalarListMandatory() {
+	function testScalarListMandatory(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		
@@ -323,7 +323,7 @@ class ImportTest extends TestCase {
 		$import->getArray();
 	}
 	
-	function testScalarListOptional() {
+	function testScalarListOptional(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		
@@ -337,7 +337,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 
-	function testScalarListValidatePass() {
+	function testScalarListValidatePass(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		$array["time"][] = "08:00:00";
@@ -354,7 +354,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 	
-	function testScalarListValidateFail() {
+	function testScalarListValidateFail(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		$array["time"][] = "8h";
@@ -373,7 +373,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($array, $import->getArray());
 	}
 
-	function testScalarListConvert() {
+	function testScalarListConvert(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		$array["time"][] = "02:00:00";
@@ -396,7 +396,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($expect, $import->getArray());
 	}
 
-	function testImportList() {
+	function testImportList(): void {
 		$array = array();
 		$array["scalar"] = "value";
 		$array["jobs"][0]["source"] = "/home/";
@@ -419,7 +419,7 @@ class ImportTest extends TestCase {
 	}
 	
 	
-	function testImportListOptional() {
+	function testImportListOptional(): void {
 		$array = array();
 		$array["scalar"] = "value";
 
@@ -437,7 +437,7 @@ class ImportTest extends TestCase {
 		
 	}
 	
-	function testImportListDefaulted() {
+	function testImportListDefaulted(): void {
 		$array = array();
 		$array["scalar"] = "value";
 
@@ -466,7 +466,7 @@ class ImportTest extends TestCase {
 		$this->assertEquals($result, $import->getArray());
 	}
 	
-	function testImportListMandatory() {
+	function testImportListMandatory(): void {
 		$array = array();
 		$array["scalar"] = "value";
 
@@ -486,7 +486,7 @@ class ImportTest extends TestCase {
 	}
 
 	
-	function testRecursion() {
+	function testRecursion(): void {
 		$array["level1"]["level2"]["level3"]["scalar"] = "15";
 		$importScalar = UserValue::asMandatory();
 
@@ -509,7 +509,7 @@ class ImportTest extends TestCase {
 	}
 	
 	
-	function testRecursionError() {
+	function testRecursionError(): void {
 		$array = array();
 		$array["level1"]["level2"]["level3"] = array();
 		
@@ -536,7 +536,7 @@ class ImportTest extends TestCase {
 
 	
 	
-	function testUnexpected() {
+	function testUnexpected(): void {
 		$array = array("name"=>"Maggie", "species"=>"Magpie", "beak"=>"nice");
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", UserValue::asMandatory());
