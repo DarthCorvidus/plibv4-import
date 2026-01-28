@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-assert",
-                "reference": "8b0c783179d8f4e6538a5e98aa597c35d2b2378c"
+                "reference": "5342cdcd3779a0df11d19b1b472a8848347eb9b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-assert/zipball/8b0c783179d8f4e6538a5e98aa597c35d2b2378c",
-                "reference": "8b0c783179d8f4e6538a5e98aa597c35d2b2378c",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-assert/zipball/5342cdcd3779a0df11d19b1b472a8848347eb9b1",
+                "reference": "5342cdcd3779a0df11d19b1b472a8848347eb9b1",
                 "shasum": ""
             },
             "require-dev": {
@@ -42,7 +42,7 @@
                     "./vendor/bin/psalm --show-info=true --no-cache"
                 ]
             },
-            "time": "2025-12-24T19:54:55+00:00"
+            "time": "2026-01-28T19:08:26+00:00"
         },
         {
             "name": "plibv4/convert",
@@ -50,12 +50,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-convert",
-                "reference": "1fcde18960cc401acfbc1ffd0dc94932e9c8c593"
+                "reference": "749e1c7c5be0bcffaedd869be0261d0656555553"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-convert/zipball/1fcde18960cc401acfbc1ffd0dc94932e9c8c593",
-                "reference": "1fcde18960cc401acfbc1ffd0dc94932e9c8c593",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-convert/zipball/749e1c7c5be0bcffaedd869be0261d0656555553",
+                "reference": "749e1c7c5be0bcffaedd869be0261d0656555553",
                 "shasum": ""
             },
             "require": {
@@ -83,7 +83,7 @@
                     "./vendor/bin/psalm --show-info=true --no-cache"
                 ]
             },
-            "time": "2025-12-22T16:34:54+00:00"
+            "time": "2026-01-28T19:11:30+00:00"
         },
         {
             "name": "plibv4/uservalue",
@@ -91,12 +91,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-uservalue",
-                "reference": "b3cb5e907f0986867ac4c058f9a0e2f65a97473f"
+                "reference": "279dd12b946ff784d4be3214a2da44eb42fba6d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-uservalue/zipball/b3cb5e907f0986867ac4c058f9a0e2f65a97473f",
-                "reference": "b3cb5e907f0986867ac4c058f9a0e2f65a97473f",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-uservalue/zipball/279dd12b946ff784d4be3214a2da44eb42fba6d3",
+                "reference": "279dd12b946ff784d4be3214a2da44eb42fba6d3",
                 "shasum": ""
             },
             "require": {
@@ -131,7 +131,7 @@
                     "./vendor/bin/psalm --show-info=true --no-cache"
                 ]
             },
-            "time": "2025-12-23T20:56:34+00:00"
+            "time": "2026-01-28T19:13:11+00:00"
         },
         {
             "name": "plibv4/validate",
@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-validate",
-                "reference": "216112dfba8a597e07562690483ceb9a39b19e6c"
+                "reference": "5775f0ca7bc7edb5deac154878563263ab1c9cff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-validate/zipball/216112dfba8a597e07562690483ceb9a39b19e6c",
-                "reference": "216112dfba8a597e07562690483ceb9a39b19e6c",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-validate/zipball/5775f0ca7bc7edb5deac154878563263ab1c9cff",
+                "reference": "5775f0ca7bc7edb5deac154878563263ab1c9cff",
                 "shasum": ""
             },
             "require": {
@@ -178,7 +178,7 @@
                     "./vendor/bin/psalm --show-info=true --no-cache"
                 ]
             },
-            "time": "2025-12-23T19:35:52+00:00"
+            "time": "2026-01-28T19:11:53+00:00"
         }
     ],
     "packages-dev": [
