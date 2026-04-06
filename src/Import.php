@@ -18,7 +18,7 @@ class Import {
 	/** @var array<array-key, mixed> */
 	private array $array = array();
 	private ImportModel $model;
-	/** @var list<string|null> */
+	/** @var list<string> */
 	private array $path = array();
 	/** @var array<string, string> */
 	private array $scalars = array();
@@ -33,6 +33,7 @@ class Import {
 	 * Construct with the array you want to import from and an import model.
 	 * @param array $array
 	 * @param ImportModel $model
+	 * @param list<string> $path
 	 */
 	function __construct(array $array, ImportModel $model, array $path = array()) {
 		$this->array = $array;
@@ -45,6 +46,10 @@ class Import {
 	#	$this->path = $path;
 	#}
 	
+	/**
+	 * 
+	 * @return list<string>
+	 */
 	private function getPath():array {
 	return $this->path;
 	}
@@ -54,7 +59,7 @@ class Import {
 		$path[] = $name;
 		$niced = array();
 		foreach ($path as $value) {
-			if($value===NULL) {
+			if($value==="") {
 				$niced[] = "[]";
 				continue;
 			}
@@ -180,7 +185,7 @@ class Import {
 			$mypath = $this->getPath();
 			$mypath[] = $name;
 			if($this->noValue($name)) {
-				$mypath[] = NULL;
+				$mypath[] = "";
 				$import = new Import(array(), $this->model->getImportListModel($name), $mypath);
 				$array = $import->getArray();
 				// If $import returned an empty array - ie all values are
