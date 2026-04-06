@@ -70,10 +70,10 @@ final class ImportTest extends TestCase {
 		$importGeneric->addScalar("name", UserValue::asMandatory());
 		$importGeneric->addScalar("species", UserValue::asMandatory());
 		$importGeneric->addScalar("location", UserValue::asMandatory());
-		$import = new Import($array, $importGeneric);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"location\"]: value is mandatory");
-		$import->getArray();
+		new Import($array, $importGeneric);
 	}
 
 	function testValidate(): void {
@@ -110,11 +110,10 @@ final class ImportTest extends TestCase {
 		$validate = UserValue::asMandatory();
 		$validate->setValidate(new ValidateTime());
 		$importGeneric->addScalar("maxDuration", $validate);
-		
-		$import = new Import($array, $importGeneric);
+
 		$this->expectException(ImportException::class);
 		#$this->expectExceptionMessage("Validate failed for [\"maxDuration\"]: ");
-		$import->getArray();
+		new Import($array, $importGeneric);
 	}
 	
 	function testValidateDefaulted(): void {
@@ -231,11 +230,10 @@ final class ImportTest extends TestCase {
 		$importModel->addScalar("source", UserValue::asMandatory());
 		$importModel->addScalar("target", UserValue::asMandatory());
 		$importModel->addImportModel("retention", $importRetention);
-		
-		$import = new Import($input, $importModel);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"retention\"][\"daily\"]: value is mandatory");
-		$import->getArray();
+		new Import($input, $importModel);
 	}
 	
 	function testImportDictionaryDefaulted(): void {
@@ -285,11 +283,10 @@ final class ImportTest extends TestCase {
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("scalar", UserValue::asMandatory());
 		$importGeneric->addScalarList("sports", UserValue::asMandatory());
-		
-		$import = new Import($array, $importGeneric);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"sports\"] is not an array");
-		$import->getArray();
+		new Import($array, $importGeneric);
 	}
 
 	
@@ -320,11 +317,10 @@ final class ImportTest extends TestCase {
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("scalar", UserValue::asMandatory());
 		$importGeneric->addScalarList("sports", $scalarMandatory);
-		
-		$import = new Import($array, $importGeneric);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"sports\"][] is mandatory, needs to contain at least one value");
-		$import->getArray();
+		new Import($array, $importGeneric);
 	}
 	
 	function testScalarListOptional(): void {
@@ -482,11 +478,10 @@ final class ImportTest extends TestCase {
 		$importMain = new ImportGeneric();
 		$importMain->addScalar("scalar", UserValue::asMandatory());
 		$importMain->addImportList("jobs", $importJobs);
-		
-		$import = new Import($array, $importMain);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"jobs\"][][\"source\"]: value is mandatory");
-		$import->getArray();
+		new Import($array, $importMain);
 	}
 
 	
@@ -532,11 +527,10 @@ final class ImportTest extends TestCase {
 		
 		$importModel = new ImportGeneric();
 		$importModel->addImportModel("level1", $level1);
-		
-		$import = new Import($array, $importModel);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("[\"level1\"][\"level2\"][\"level3\"][\"scalar\"]: value is mandatory");
-		$import->getArray();
+		$import = new Import($array, $importModel);
 	}
 
 	
@@ -546,11 +540,10 @@ final class ImportTest extends TestCase {
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", UserValue::asMandatory());
 		$importGeneric->addScalar("species", UserValue::asMandatory());
-		
-		$import = new Import($array, $importGeneric);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("Unexpected scalar at key: [\"beak\"]");
-		$import->getArray();
+		$import = new Import($array, $importGeneric);
 	}
 	
 	function testUnexpectedArray(): void {
@@ -558,10 +551,9 @@ final class ImportTest extends TestCase {
 		$importGeneric = new ImportGeneric();
 		$importGeneric->addScalar("name", UserValue::asMandatory());
 		$importGeneric->addScalar("species", UserValue::asMandatory());
-		
-		$import = new Import($array, $importGeneric);
+
 		$this->expectException(ImportException::class);
 		$this->expectExceptionMessage("Unexpected array at key: [\"chicks\"]");
-		$import->getArray();
+		$import = new Import($array, $importGeneric);
 	}
 }

@@ -25,14 +25,16 @@ class Import {
 	 * @param array $array
 	 * @param ImportModel $model
 	 */
-	function __construct(array $array, ImportModel $model) {
+	function __construct(array $array, ImportModel $model, array $path = array()) {
 		$this->array = $array;
 		$this->model = $model;
+		$this->path = $path;
+		$this->import();
 	}
 
-	private function setPath(array $path): void {
-		$this->path = $path;
-	}
+	#private function setPath(array $path): void {
+	#	$this->path = $path;
+	#}
 	
 	private function getPath():array {
 	return $this->path;
@@ -89,6 +91,7 @@ class Import {
 					continue;
 				}
 				$this->imported[$value] = $userValue->getValue();
+				#$this->scalars[$value] = $userValue->getValue();
 			} catch (MandatoryException $e) {
 				throw new ImportException($this->getErrorPath($value).": ".$e->getMessage());
 			} catch (ValidateException $e) {
@@ -102,10 +105,9 @@ class Import {
 			$mypath = $this->getPath();
 			$mypath[] = $name;
 			if($this->noValue($name)) {
-				$import = new Import(array(), $this->model->getImportModel($name));
+				$import = new Import(array(), $this->model->getImportModel($name), $mypath);
 
 				
-				$import->setPath($mypath);
 				$array = $import->getArray();
 				// If $import returned an empty array - ie all values are
 				// optional and none was defaulted - skip value altogether.
@@ -115,8 +117,7 @@ class Import {
 				$this->imported[$name] = $array;
 				continue;
 			}
-			$import = new Import($this->array[$name], $this->model->getImportModel($name));
-			$import->setPath($mypath);
+			$import = new Import($this->array[$name], $this->model->getImportModel($name), $mypath);
 			$this->imported[$name] = $import->getArray();
 		}
 	}
@@ -161,8 +162,7 @@ class Import {
 			$mypath[] = $name;
 			if($this->noValue($name)) {
 				$mypath[] = NULL;
-				$import = new Import(array(), $this->model->getImportListModel($name));
-				$import->setPath($mypath);
+				$import = new Import(array(), $this->model->getImportListModel($name), $mypath);
 				$array = $import->getArray();
 				// If $import returned an empty array - ie all values are
 				// optional and none was defaulted - skip value altogether.
@@ -183,6 +183,18 @@ class Import {
 		}
 	}
 
+	private function import(): void {
+		if($this->imported===array()) {
+			$this->importScalars();
+			$this->importLists();
+			
+			$this->importDictionaries();
+			$this->importDictionaryList();
+					
+			$this->checkUnexpected();
+		}
+	}
+	
 	/**
 	 * Get Array
 	 * 
@@ -194,15 +206,6 @@ class Import {
 	 * @throws ImportException
 	 */
 	function getArray(): array {
-		if($this->imported===array()) {
-			$this->importScalars();
-			$this->importLists();
-			
-			$this->importDictionaries();
-			$this->importDictionaryList();
-					
-			$this->checkUnexpected();
-		}
-	return $this->imported;
+		return $this->imported;
 	}
 }
