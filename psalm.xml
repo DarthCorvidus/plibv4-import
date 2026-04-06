@@ -30,11 +30,6 @@
 				<file name="src/Import.php" />
 			</errorLevel>
 		</MixedAssignment>
-		<MixedArgumentTypeCoercion>
-			<errorLevel type="suppress">
-				<file name="src/Import.php" />
-			</errorLevel>
-		</MixedArgumentTypeCoercion>
 		<PropertyTypeCoercion>
 			<errorLevel type="suppress">
 				<file name="src/Import.php" />

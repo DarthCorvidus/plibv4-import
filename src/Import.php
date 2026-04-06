@@ -15,11 +15,20 @@ use plibv4\validate\ValidateException;
  * values, mandatory values, validators and conversions.
  */
 class Import {
+	/** @var array<array-key, mixed> */
 	private array $array = array();
-	private array $imported = array();
 	private ImportModel $model;
 	/** @var list<string|null> */
 	private array $path = array();
+	/** @var array<string, string> */
+	private array $scalars = array();
+	/** @var array<string, list<string>> */
+	private array $scalarLists = array();
+	/** @var array<string, list<Import>> */
+	private array $dictionaryLists = array();
+	/** @var array<string, Import> */
+	private array $dictionaries = array();
+
 	/**
 	 * Construct with the array you want to import from and an import model.
 	 * @param array $array
@@ -57,11 +66,19 @@ class Import {
 	
 	private function checkUnexpected(): void {
 		foreach($this->array as $key => $value) {
-			if(!isset($this->imported[$key]) and is_scalar($value)) {
-				throw new ImportException("Unexpected scalar at key: ".$this->getErrorPath($key));
+			/**
+			 * To satisfy psalm, but in the end, Import wants to have an array
+			 * which is array<string, mixed> at the top level, but there is no
+			 * way to guarantee that, so array<array-key, mixed> has to be used
+			 * as type for Import.
+			 */
+			$name = (string)$key;
+			if(!isset($this->scalars[$name]) and is_scalar($value)) {
+				throw new ImportException("Unexpected scalar at key: ".$this->getErrorPath($name));
 			}
-			if(!isset($this->imported[$key]) and is_array($value)) {
-				throw new ImportException("Unexpected array at key: ".$this->getErrorPath($key));
+
+			if(!isset($this->scalarLists[$name]) and !isset($this->dictionaryLists[$name]) and !isset($this->dictionaries[$name]) and is_array($value)) {
+				throw new ImportException("Unexpected array at key: ".$this->getErrorPath($name));
 			}
 
 		}
@@ -90,8 +107,8 @@ class Import {
 				if($userValue->getValue()==="") {
 					continue;
 				}
-				$this->imported[$value] = $userValue->getValue();
-				#$this->scalars[$value] = $userValue->getValue();
+				#$this->imported[$value] = $userValue->getValue();
+				$this->scalars[$value] = $userValue->getValue();
 			} catch (MandatoryException $e) {
 				throw new ImportException($this->getErrorPath($value).": ".$e->getMessage());
 			} catch (ValidateException $e) {
@@ -114,11 +131,11 @@ class Import {
 				if(empty($array)) {
 					continue;
 				}
-				$this->imported[$name] = $array;
+				$this->dictionaries[$name] = $import;
 				continue;
 			}
 			$import = new Import($this->array[$name], $this->model->getImportModel($name), $mypath);
-			$this->imported[$name] = $import->getArray();
+			$this->dictionaries[$name] = $import;
 		}
 	}
 	
@@ -137,7 +154,8 @@ class Import {
 				if($value==="") {
 					return;
 				}
-				$this->imported[$name][] = $userValue->getValue();
+				#$this->imported[$name][] = $userValue->getValue();
+				$this->scalarLists[$name][] = $userValue->getValue();
 				return;
 			}
 
@@ -147,7 +165,8 @@ class Import {
 
 			foreach($this->array[$name] as $value) {
 				$userValue->setValue($value);
-				$this->imported[$name][] = $userValue->getValue();
+				#$this->imported[$name][] = $userValue->getValue();
+				$this->scalarLists[$name][] = $userValue->getValue();
 			}
 		} catch (MandatoryException $e) {
 			throw new ImportException($this->getErrorPath($name)."[] is mandatory, needs to contain at least one value");
@@ -169,7 +188,7 @@ class Import {
 				if(empty($array)) {
 					continue;
 				}
-				$this->imported[$name][] = $array;
+				$this->dictionaryLists[$name][] = $import;
 				continue;
 			}
 
@@ -178,21 +197,19 @@ class Import {
 				$mypath[] = $id;
 				$importModel = $this->model->getImportListModel($name);
 				$import = new Import($sub, $importModel);
-				$this->imported[$name][] = $import->getArray();
+				$this->dictionaryLists[$name][] = $import;
 			}
 		}
 	}
 
 	private function import(): void {
-		if($this->imported===array()) {
-			$this->importScalars();
-			$this->importLists();
-			
-			$this->importDictionaries();
-			$this->importDictionaryList();
-					
-			$this->checkUnexpected();
-		}
+		$this->importScalars();
+		$this->importLists();
+		
+		$this->importDictionaries();
+		$this->importDictionaryList();
+				
+		$this->checkUnexpected();
 	}
 	
 	/**
@@ -206,6 +223,19 @@ class Import {
 	 * @throws ImportException
 	 */
 	function getArray(): array {
-		return $this->imported;
+		/** @var array<array-key, mixed> */
+		$array = array();
+		$array = array_merge($array, $this->scalars);
+		$array = array_merge($array, $this->scalarLists);
+		foreach($this->dictionaryLists as $name => $dictList) {
+			foreach($dictList as $import) {
+				$array[$name][] = $import->getArray();
+			}
+		}
+
+		foreach($this->dictionaries as $name => $import) {
+			$array[$name] = $import->getArray();
+		}
+	return $array;
 	}
 }
