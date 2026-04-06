@@ -25,11 +25,6 @@
 				<file name="src/Import.php" />
 			</errorLevel>
 		</MixedArgument>
-		<MixedAssignment>
-			<errorLevel type="suppress">
-				<file name="src/Import.php" />
-			</errorLevel>
-		</MixedAssignment>
 	</issueHandlers>
     <projectFiles>
         <directory name="src" />

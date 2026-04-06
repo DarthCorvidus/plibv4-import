@@ -70,6 +70,11 @@ class Import {
 	
 	
 	private function checkUnexpected(): void {
+		/**
+		 * Type of $value cannot be determined and does not need to be
+		 * determined.
+		 * @psalm-suppress MixedAssignment
+		 */
 		foreach($this->array as $key => $value) {
 			/**
 			 * To satisfy psalm, but in the end, Import wants to have an array
@@ -168,6 +173,10 @@ class Import {
 				throw new ImportException($this->getErrorPath($name)." is not an array");
 			}
 
+			/**
+			 * Type opf $value cannot be determined at this point.
+			 * @psalm-suppress MixedAssignment
+			 */
 			foreach($this->array[$name] as $value) {
 				$userValue->setValue($value);
 				#$this->imported[$name][] = $userValue->getValue();
@@ -197,9 +206,19 @@ class Import {
 				continue;
 			}
 
-			
+			if(!is_array($this->array[$name])) {
+				throw new ImportException($this->getErrorPath($name)." is not an array");
+			}
+			/**
+			 * Type opf $sub cannot be determined at this point.
+			 * @psalm-suppress MixedAssignment
+			 */
 			foreach($this->array[$name] as $id => $sub) {
-				$mypath[] = $id;
+				$keyName = (string)$id;
+				$mypath[] = $keyName;
+				if(!is_array($sub)) {
+					throw new ImportException($this->getErrorPath($name)."[".$keyName."]: array expected");
+				}
 				$importModel = $this->model->getImportListModel($name);
 				$import = new Import($sub, $importModel);
 				$this->dictionaryLists[$name][] = $import;

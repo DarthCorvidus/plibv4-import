@@ -19,6 +19,7 @@ interface ImportModel {
 	 * Return a list of names that should be imported as scalar values, whereas
 	 * the name has to correspondent with an array key that contains a scalar
 	 * value.
+	 * @return list<string> Description
 	 */
 	function getScalarNames(): array;
 	/**
