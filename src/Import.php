@@ -69,11 +69,6 @@ class Import {
 	
 	
 	private function checkUnexpected(): void {
-		/**
-		 * Type of $value cannot be determined and does not need to be
-		 * determined.
-		 * @psalm-suppress MixedAssignment
-		 */
 		foreach($this->fetch->getKeys() as $name) {
 			/**
 			 * To satisfy psalm, but in the end, Import wants to have an array
@@ -204,10 +199,6 @@ class Import {
 			if(!$this->fetch->isArray($name)) {
 				throw new ImportException($this->getErrorPath($name)." is not an array");
 			}
-			/**
-			 * Type opf $sub cannot be determined at this point.
-			 * @psalm-suppress MixedAssignment
-			 */
 			foreach($this->fetch->asArray($name) as $id => $sub) {
 				$keyName = (string)$id;
 				$mypath[] = $keyName;
