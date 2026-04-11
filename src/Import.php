@@ -251,6 +251,7 @@ class Import {
 		$array = array_merge($array, $this->scalars);
 		$array = array_merge($array, $this->scalarLists);
 		foreach($this->dictionaryLists as $name => $dictList) {
+			$array[$name] = [];
 			foreach($dictList as $import) {
 				$array[$name][] = $import->getArray();
 			}
