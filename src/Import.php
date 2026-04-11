@@ -252,4 +252,42 @@ class Import {
 		}
 	return $array;
 	}
+	
+	function hasString(string $name): bool {
+		return isset($this->scalars[$name]);
+	}
+	
+	function getString(string $name): string {
+		return $this->scalars[$name];
+	}
+	
+	function hasStringList(string $name): bool {
+		return isset($this->scalarLists[$name]);
+	}
+
+	/**
+	 * 
+	 * @param string $name
+	 * @return list<string>
+	 */
+	function getStringList(string $name): array {
+		return $this->scalarLists[$name];
+	}
+	
+	function hasImport(string $name): bool {
+		return isset($this->dictionaries[$name]);
+	}
+	
+	function getImport(string $name): Import {
+		return $this->dictionaries[$name];
+	}
+	
+	function hasImportList(string $name): bool {
+		return isset($this->dictionaryLists[$name]);
+	}
+	
+	function getImportList(string $name): bool {
+		return $this->dictionaryLists[$name];
+	}
+
 }
