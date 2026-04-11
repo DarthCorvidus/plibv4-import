@@ -15,8 +15,7 @@ use plibv4\validate\ValidateException;
  * values, mandatory values, validators and conversions.
  */
 class Import {
-	/** @var array<array-key, mixed> */
-	private array $array = array();
+	private ArrayFetch $fetch;
 	private ImportModel $model;
 	/** @var list<string> */
 	private array $path = array();
@@ -36,7 +35,7 @@ class Import {
 	 * @param list<string> $path
 	 */
 	function __construct(array $array, ImportModel $model, array $path = array()) {
-		$this->array = $array;
+		$this->fetch = new ArrayFetch($array);
 		$this->model = $model;
 		$this->path = $path;
 		$this->import();
@@ -75,19 +74,19 @@ class Import {
 		 * determined.
 		 * @psalm-suppress MixedAssignment
 		 */
-		foreach($this->array as $key => $value) {
+		foreach($this->fetch->getKeys() as $name) {
 			/**
 			 * To satisfy psalm, but in the end, Import wants to have an array
 			 * which is array<string, mixed> at the top level, but there is no
 			 * way to guarantee that, so array<array-key, mixed> has to be used
 			 * as type for Import.
 			 */
-			$name = (string)$key;
-			if(!isset($this->scalars[$name]) and is_scalar($value)) {
+			$name = (string)$name;
+			if(!isset($this->scalars[$name]) and $this->fetch->isScalar($name)) {
 				throw new ImportException("Unexpected scalar at key: ".$this->getErrorPath($name));
 			}
 
-			if(!isset($this->scalarLists[$name]) and !isset($this->dictionaryLists[$name]) and !isset($this->dictionaries[$name]) and is_array($value)) {
+			if(!isset($this->scalarLists[$name]) and !isset($this->dictionaryLists[$name]) and !isset($this->dictionaries[$name]) and $this->fetch->isArray($name)) {
 				throw new ImportException("Unexpected array at key: ".$this->getErrorPath($name));
 			}
 
@@ -95,13 +94,13 @@ class Import {
 	}
 	
 	private function noValue(string $key): bool {
-		if(!isset($this->array[$key])) {
+		if(!$this->fetch->hasKey($key)) {
 			return true;
 		}
-		if($this->array[$key]==="") {
+		if($this->fetch->isScalar($key) && $this->fetch->asString($key)==="") {
 			return true;
 		}
-		if($this->array[$key]===array()) {
+		if($this->fetch->isArray($key) && $this->fetch->asArray($key)===array()) {
 			return true;
 		}
 	return false;
@@ -111,8 +110,8 @@ class Import {
 		foreach($this->model->getScalarNames() as $value) {
 			try {
 				$userValue = $this->model->getScalarModel($value);
-				if(isset($this->array[$value])) {
-					$userValue->setValue($this->array[$value]);
+				if($this->fetch->hasKey($value)) {
+					$userValue->setValue($this->fetch->asString($value));
 				}
 				if($userValue->getValue()==="") {
 					continue;
@@ -144,7 +143,7 @@ class Import {
 				$this->dictionaries[$name] = $import;
 				continue;
 			}
-			$import = new Import($this->array[$name], $this->model->getImportModel($name), $mypath);
+			$import = new Import($this->fetch->asArray($name), $this->model->getImportModel($name), $mypath);
 			$this->dictionaries[$name] = $import;
 		}
 	}
@@ -159,7 +158,7 @@ class Import {
 		$userValue = $this->model->getScalarListModel($name);
 		
 		try {
-			if(!isset($this->array[$name])) {
+			if(!$this->fetch->hasKey($name)) {
 				$value = $userValue->getValue();
 				if($value==="") {
 					return;
@@ -169,7 +168,7 @@ class Import {
 				return;
 			}
 
-			if(!is_array($this->array[$name])) {
+			if(!$this->fetch->isArray($name)) {
 				throw new ImportException($this->getErrorPath($name)." is not an array");
 			}
 
@@ -177,7 +176,7 @@ class Import {
 			 * Type opf $value cannot be determined at this point.
 			 * @psalm-suppress MixedAssignment
 			 */
-			foreach($this->array[$name] as $value) {
+			foreach($this->fetch->asArray($name) as $value) {
 				$userValue->setValue($value);
 				#$this->imported[$name][] = $userValue->getValue();
 				$this->scalarLists[$name][] = $userValue->getValue();
@@ -206,14 +205,14 @@ class Import {
 				continue;
 			}
 
-			if(!is_array($this->array[$name])) {
+			if(!$this->fetch->isArray($name)) {
 				throw new ImportException($this->getErrorPath($name)." is not an array");
 			}
 			/**
 			 * Type opf $sub cannot be determined at this point.
 			 * @psalm-suppress MixedAssignment
 			 */
-			foreach($this->array[$name] as $id => $sub) {
+			foreach($this->fetch->asArray($name) as $id => $sub) {
 				$keyName = (string)$id;
 				$mypath[] = $keyName;
 				if(!is_array($sub)) {
