@@ -41,6 +41,13 @@ class ArrayFetch {
 			throw new \OutOfBoundsException("key $key not available in array");
 		}
 	}
+	
+	/**
+	 * @return list<string|int>
+	 */
+	public function getKeys(): array {
+		return array_keys($this->array);
+	}
 
 	/**
 	 * Import value from array as string, throw exception if impossible.
@@ -218,6 +225,26 @@ class ArrayFetch {
 	public function isBool(string $key): bool {
 		$this->assertKeyExists($key);
 	return is_bool($this->array[$key]);
+	}
+	
+	/**
+	 * Checks if array value is of type bool.
+	 * @param string $key
+	 * @return bool
+	 */
+	public function isScalar(string $key): bool {
+		$this->assertKeyExists($key);
+	return is_scalar($this->array[$key]);
+	}
+	
+	/**
+	 * Checks if array value is of type bool.
+	 * @param string $key
+	 * @return bool
+	 */
+	public function isArray(string $key): bool {
+		$this->assertKeyExists($key);
+	return is_array($this->array[$key]);
 	}
 	
 	/**
