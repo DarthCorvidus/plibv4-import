@@ -172,13 +172,9 @@ class Import {
 				throw new ImportException($this->getErrorPath($name)." is not an array");
 			}
 
-			/**
-			 * Type opf $value cannot be determined at this point.
-			 * @psalm-suppress MixedAssignment
-			 */
-			foreach($this->fetch->asArray($name) as $value) {
-				$userValue->setValue($value);
-				#$this->imported[$name][] = $userValue->getValue();
+			$sub = $this->fetch->asArrayFetch($name);
+			foreach($sub->getKeys() as $subName) {
+				$userValue->setValue($sub->asString((string)$subName));
 				$this->scalarLists[$name][] = $userValue->getValue();
 			}
 		} catch (MandatoryException $e) {

@@ -15,16 +15,6 @@
 				<directory name="src" />
 			</errorLevel>
 		</ClassMustBeFinal>
-		<MixedArrayAssignment>
-			<errorLevel type="suppress">
-				<file name="src/Import.php" />
-			</errorLevel>
-		</MixedArrayAssignment>
-		<MixedArgument>
-			<errorLevel type="suppress">
-				<file name="src/Import.php" />
-			</errorLevel>
-		</MixedArgument>
 	</issueHandlers>
     <projectFiles>
         <directory name="src" />
