@@ -23,7 +23,7 @@ class Import {
 	private array $scalars = array();
 	/** @var array<string, list<string>> */
 	private array $scalarLists = array();
-	/** @var array<string, list<Import>> */
+	/** @var array<string, Imports> */
 	private array $dictionaryLists = array();
 	/** @var array<string, Import> */
 	private array $dictionaries = array();
@@ -192,13 +192,16 @@ class Import {
 				if(empty($array)) {
 					continue;
 				}
-				$this->dictionaryLists[$name][] = $import;
+				$imports = new Imports();
+				$imports->addImport($import);
+				$this->dictionaryLists[$name] = $imports;
 				continue;
 			}
 
 			if(!$this->fetch->isArray($name)) {
 				throw new ImportException($this->getErrorPath($name)." is not an array");
 			}
+			$this->dictionaryLists[$name] = new Imports();
 			foreach($this->fetch->asArray($name) as $id => $sub) {
 				$keyName = (string)$id;
 				$mypath[] = $keyName;
@@ -207,7 +210,7 @@ class Import {
 				}
 				$importModel = $this->model->getImportListModel($name);
 				$import = new Import($sub, $importModel);
-				$this->dictionaryLists[$name][] = $import;
+				$this->dictionaryLists[$name]->addImport($import);
 			}
 		}
 	}
@@ -239,8 +242,8 @@ class Import {
 		$array = array_merge($array, $this->scalarLists);
 		foreach($this->dictionaryLists as $name => $dictList) {
 			$array[$name] = [];
-			foreach($dictList as $import) {
-				$array[$name][] = $import->getArray();
+			for($i = 0; $i < $dictList->getCount(); $i++) {
+				$array[$name][] = $dictList->getImport($i)->getArray();
 			}
 		}
 
