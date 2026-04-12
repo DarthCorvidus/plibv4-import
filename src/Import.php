@@ -286,7 +286,7 @@ class Import {
 		return isset($this->dictionaryLists[$name]);
 	}
 	
-	function getImportList(string $name): bool {
+	function getImportList(string $name): Imports {
 		return $this->dictionaryLists[$name];
 	}
 
