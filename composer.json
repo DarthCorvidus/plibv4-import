@@ -27,7 +27,6 @@
 	"require": {
 			"plibv4/convert": "dev-main",
 			"plibv4/validate": "dev-main",
-			"plibv4/assert": "dev-main",
 			"plibv4/uservalue": "dev-main"
 	},
 	"require-dev": {

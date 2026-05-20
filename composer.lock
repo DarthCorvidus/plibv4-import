@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55ece34c40295ebddecdfaa98ccfbeda",
+    "content-hash": "5ccf4e93df2eb3a82a1cae1363c25ce2",
     "packages": [
         {
             "name": "plibv4/assert",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-assert",
-                "reference": "5342cdcd3779a0df11d19b1b472a8848347eb9b1"
+                "reference": "6dc2c9b004499b9e57e1477261d4bdd7a6b3fbeb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-assert/zipball/5342cdcd3779a0df11d19b1b472a8848347eb9b1",
-                "reference": "5342cdcd3779a0df11d19b1b472a8848347eb9b1",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-assert/zipball/6dc2c9b004499b9e57e1477261d4bdd7a6b3fbeb",
+                "reference": "6dc2c9b004499b9e57e1477261d4bdd7a6b3fbeb",
                 "shasum": ""
             },
             "require-dev": {
@@ -42,7 +42,7 @@
                     "./vendor/bin/psalm --show-info=true --no-cache"
                 ]
             },
-            "time": "2026-01-28T19:08:26+00:00"
+            "time": "2026-05-18T19:13:48+00:00"
         },
         {
             "name": "plibv4/convert",
@@ -5186,7 +5186,6 @@
     "stability-flags": {
         "plibv4/convert": 20,
         "plibv4/validate": 20,
-        "plibv4/assert": 20,
         "plibv4/uservalue": 20
     },
     "prefer-stable": true,
