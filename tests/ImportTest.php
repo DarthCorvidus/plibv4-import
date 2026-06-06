@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 namespace plibv4\import;
+
+use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use plibv4\uservalue\UserValue;
 use plibv4\uservalue\MandatoryException;
@@ -26,6 +28,24 @@ final class ImportTest extends TestCase {
 		$importGeneric->addScalar("species", UserValue::asMandatory());
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($import->getArray(), $result);
+		
+		$this->assertSame(true, $import->hasString("name"));
+		$this->assertSame("Maggie", $import->getString("name"));
+	}
+
+	function testImportScalarMissing(): void {
+		$array = array("name"=>"Maggie", "species"=>"Magpie");
+		$result = array("name"=>"Maggie", "species"=>"Magpie");
+		$importGeneric = new ImportGeneric();
+		$importGeneric->addScalar("name", UserValue::asMandatory());
+		$importGeneric->addScalar("species", UserValue::asMandatory());
+
+		$import = new Import($array, $importGeneric);
+		$this->assertSame(false, $import->hasString("age"));
+		$this->expectException(OutOfBoundsException::class);
+		$this->expectExceptionMessage("[\"age\"]: key does not exist");
+		
+		$import->getString("age");
 	}
 	
 	function testImportScalarEmpty(): void {
@@ -193,6 +213,11 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($input, $importModel);
 		$this->assertEquals($input, $import->getArray());
+
+		// get Import for retention
+		$expected = new Import($input["retention"], $importRetention, array("retention"));
+		$this->assertEquals(true, $import->hasImport("retention"));
+		$this->assertEquals($expected, $import->getImport("retention"));
 	}
 
 	function testImportDictionaryOptional(): void {
@@ -213,6 +238,10 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($input, $importModel);
 		$this->assertEquals($input, $import->getArray());
+		
+		// if retention is optional and has no values, there is no
+		// Import.
+		$this->assertEquals(false, $import->hasImport("retention"));
 	}
 	
 	function testImportDictionaryMandatory(): void {
@@ -258,6 +287,14 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($input, $importModel);
 		$this->assertEquals($result, $import->getArray());
+
+		/**
+		 * If Import for retention is not or impartially set, but defaulted,
+		 * import default values.
+		 */
+		$expected = new Import(array(), $importRetention, array("retention"));
+		$this->assertEquals(true, $import->hasImport("retention"));
+		$this->assertEquals($expected, $import->getImport("retention"));
 	}
 
 	function testScalarList(): void {
@@ -273,6 +310,10 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($array, $import->getArray());
+
+		$this->assertSame(true, $import->hasStringList("sports"));
+		$this->assertSame($array["sports"], $import->getStringList("sports"));
+
 	}
 
 	function testScalarListScalarInsteadOfList(): void {
@@ -306,6 +347,10 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($result, $import->getArray());
+
+		// fill with defaulted value
+		$this->assertSame(true, $import->hasStringList("sports"));
+		$this->assertSame($result["sports"], $import->getStringList("sports"));
 	}
 	
 	function testScalarListMandatory(): void {
@@ -335,6 +380,12 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importGeneric);
 		$this->assertEquals($array, $import->getArray());
+
+		// unfilled optional value is not there
+		$this->assertSame(false, $import->hasStringList("sports"));
+		$this->expectException(OutOfBoundsException::class);
+		$this->expectExceptionMessage("[\"sports\"]: key does not exist" );
+		$import->getStringList("sports");
 	}
 
 	function testScalarListValidatePass(): void {
@@ -415,7 +466,17 @@ final class ImportTest extends TestCase {
 		
 
 		$import = new Import($array, $importMain);
+		$subImports = new Imports();
+		/**
+		 * @todo: Recheck pathing here. testImportListDefaulted() requires
+		 * a path for the expected imports, testImportList doesn't, which
+		 * is a bug in Import.
+		 */
+		$subImports->addImport(new Import($array["jobs"][0], $importJobs));
+		$subImports->addImport(new Import($array["jobs"][1], $importJobs));
+
 		$this->assertEquals($array, $import->getArray());
+		$this->assertEquals($subImports, $import->getImportList("jobs"));
 	}
 	
 	
@@ -434,6 +495,7 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importMain);
 		$this->assertEquals($array, $import->getArray());
+		$this->assertSame(false, $import->hasImportList("jobs"));
 		
 	}
 	
@@ -464,6 +526,17 @@ final class ImportTest extends TestCase {
 		
 		$import = new Import($array, $importMain);
 		$this->assertEquals($result, $import->getArray());
+
+		$imports = new Imports();
+		/**
+		 * Create an Import with an empty array to match the behavior of $import above.
+		 * Since $array["jobs"] doesn't exist, both will populate values from defaults.
+		 * This allows us to verify that $import->getImportList("jobs") correctly
+		 * returns an Imports object with the same defaulted values.
+		 */
+		$imports->addImport(new Import(array(), $importJobs, array("jobs", "")));
+
+		$this->assertEquals($imports, $import->getImportList("jobs"));
 	}
 	
 	function testImportListMandatory(): void {

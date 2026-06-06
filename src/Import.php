@@ -5,6 +5,8 @@
  * @license LGPL
  */
 namespace plibv4\import;
+
+use OutOfBoundsException;
 use plibv4\uservalue\UserValue;
 use plibv4\uservalue\MandatoryException;
 use plibv4\validate\ValidateException;
@@ -258,6 +260,9 @@ class Import {
 	}
 	
 	function getString(string $name): string {
+		if(!$this->hasString($name)) {
+			throw new OutOfBoundsException($this->getErrorPath($name).": key does not exist");
+		}
 		return $this->scalars[$name];
 	}
 	
@@ -271,6 +276,9 @@ class Import {
 	 * @return list<string>
 	 */
 	function getStringList(string $name): array {
+		if(!$this->hasStringList($name)) {
+			throw new OutOfBoundsException($this->getErrorPath($name).": key does not exist");
+		}
 		return $this->scalarLists[$name];
 	}
 	
