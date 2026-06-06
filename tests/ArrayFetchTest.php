@@ -45,6 +45,12 @@ final class ArrayFetchTest extends TestCase {
 		$access = new ArrayFetch($example);
 		$this->assertInstanceOf(ArrayFetch::class, $access);
 	}
+
+	function testGetRawArray(): void {
+		$example = self::getExample();
+		$access = new ArrayFetch($example);
+		$this->assertSame($example, $access->getRawArray());
+	}
 	
 	/**
 	 * @dataProvider hasKeyProvider 

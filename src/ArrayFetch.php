@@ -18,6 +18,10 @@ class ArrayFetch {
 		$this->array = $array;
 	}
 	
+	function getRawArray(): array {
+		return $this->array;
+	}
+
 	/**
 	 * Set new array (so it must not be reconstructed when used in loops)
 	 * @param array $array
