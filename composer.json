@@ -34,8 +34,10 @@
 		"phpunit/phpunit": "^9"
 	},
 	"autoload": {
-        "classmap": ["src/"]
-    },
+		"psr-4": {
+			"plibv4\\import\\": "src/"
+		}
+	},
 	"scripts": {
 		"test": "./vendor/bin/phpunit --bootstrap vendor/autoload.php tests",
 		"testdox": "./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox --colors=always tests",
